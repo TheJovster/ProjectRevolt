@@ -27,7 +27,7 @@ public class Mover : MonoBehaviour
         {
             MoveToCursor();
         }
-        animator.SetFloat("MoveSpeed", navMeshAgent.velocity.magnitude); //this might work
+        animator.SetFloat("MoveSpeed", navMeshAgent.velocity.magnitude); //this does work
     }
 
     private void MoveToCursor() 
