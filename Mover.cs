@@ -5,8 +5,11 @@ using UnityEngine.AI;
 
 public class Mover : MonoBehaviour
 {
-    [SerializeField] private Transform target;
+    //navigation
+    [SerializeField] private LayerMask groundLayer;
     private NavMeshAgent navMeshAgent;
+    
+
 
     void Start()
     {
@@ -15,6 +18,21 @@ public class Mover : MonoBehaviour
 
     void Update()
     {
-        navMeshAgent.destination = target.position;
+        if(Input.GetMouseButtonDown(0)) 
+        {
+            MoveToCursor();
+            
+        }
+
+    }
+
+    private void MoveToCursor() 
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if(Physics.Raycast(ray, out hit)) 
+        {
+            navMeshAgent.destination = hit.point;
+        }
     }
 }
