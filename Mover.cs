@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class Mover : MonoBehaviour
 {
     //navigation
-    [SerializeField] private LayerMask groundLayer;
     private NavMeshAgent navMeshAgent;
     
 
