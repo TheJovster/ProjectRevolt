@@ -5,14 +5,20 @@ using UnityEngine.AI;
 
 public class Mover : MonoBehaviour
 {
+    //variables
+    //components
+    private Animator animator;
+
     //navigation
     private NavMeshAgent navMeshAgent;
+
     
 
 
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -21,7 +27,7 @@ public class Mover : MonoBehaviour
         {
             MoveToCursor();
         }
-
+        animator.SetFloat("MoveSpeed", navMeshAgent.velocity.magnitude); //this might work
     }
 
     private void MoveToCursor() 
@@ -31,6 +37,7 @@ public class Mover : MonoBehaviour
         if(Physics.Raycast(ray, out hit)) 
         {
             navMeshAgent.destination = hit.point;
+            
         }
     }
 }
