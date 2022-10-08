@@ -23,11 +23,11 @@ public class Mover : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetMouseButtonDown(0)) 
+        if (Input.GetMouseButtonDown(0))
         {
             MoveToCursor();
         }
-        animator.SetFloat("MoveSpeed", navMeshAgent.velocity.magnitude); //this does work
+        UpdateAnimator();
     }
 
     private void MoveToCursor() 
@@ -39,5 +39,12 @@ public class Mover : MonoBehaviour
             navMeshAgent.destination = hit.point;
             
         }
+    }
+
+    private void UpdateAnimator()
+    {
+        Vector3 velocity = navMeshAgent.velocity;
+        Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+        animator.SetFloat("MoveSpeed", localVelocity.magnitude, 0.1f, Time.deltaTime); //this does work
     }
 }
