@@ -16,9 +16,9 @@ namespace ProjectRevolt.Movement
 
         void Start()
         {
+            fighter = GetComponent<Fighter>();
             navMeshAgent = GetComponent<NavMeshAgent>();
             animator = GetComponent<Animator>();
-            fighter = GetComponent<Fighter>();
         }
 
         void Update()
@@ -36,7 +36,6 @@ namespace ProjectRevolt.Movement
         {
             navMeshAgent.destination = destination;
             navMeshAgent.isStopped = false;
-            fighter.Cancel();
         }
 
         public void Stop() 
@@ -49,7 +48,7 @@ namespace ProjectRevolt.Movement
             Vector3 velocity = navMeshAgent.velocity;
             Vector3 localVelocity = transform.InverseTransformDirection(velocity);
             float moveSpeed = localVelocity.z;
-            animator.SetFloat("MoveSpeed", moveSpeed, 0.1f, Time.deltaTime); //this does work
+            animator.SetFloat("MoveSpeed", moveSpeed); //this does work
         }
     }
 }
