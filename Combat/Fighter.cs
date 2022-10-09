@@ -55,6 +55,7 @@ namespace ProjectRevolt.Combat
             {
                 animator.SetTrigger("Attack");
                 timeSinceLastAttack = 0f;
+                
 
             }
             //more stuff to add
@@ -65,11 +66,14 @@ namespace ProjectRevolt.Combat
             return Vector3.Distance(transform.position, target.position) < weaponRange;
         }
 
-        public void Attack(CombatTarget combatTarget) 
+        public void Attack(CombatTarget combatTarget)
         {
             actionScheduler.StartAction(this);
             target = combatTarget.transform;
-            
+            if (target.GetComponent<Health>() != null && !target.GetComponent<Health>().isAlive) 
+            {
+                Cancel();
+            }
         }
 
         public void Cancel() 
@@ -82,7 +86,10 @@ namespace ProjectRevolt.Combat
         private void Hit()
         {
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
-            target.GetComponent<Health>().TakeDamage(); //needs a passthrough, additional functionality
+            if(target != null && target.GetComponent<Health>() != null)  
+            {
+                target.GetComponent<Health>().TakeDamage(20f); //needs a passthrough, additional functionality
+            }
             int hitSFXIndex = Random.Range(0, swingEffects.Length);
             audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
             audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
