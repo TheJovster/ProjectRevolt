@@ -16,7 +16,7 @@ namespace ProjectRevolt.Control
         }
         void Update()
         {
-            InteractWithCombat();
+            if(InteractWithCombat()) return;
             InteractWithMovement();
         }
 
@@ -28,7 +28,7 @@ namespace ProjectRevolt.Control
             }
         }
 
-        private void InteractWithCombat() 
+        private bool InteractWithCombat() 
         {
             RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
             foreach (RaycastHit hit in hits)
@@ -39,8 +39,10 @@ namespace ProjectRevolt.Control
                 if(Input.GetMouseButtonDown(0)) 
                 {
                     fighter.Attack(target);
-                } 
+                }
+                return true;
             }
+            return false;
         }
 
         private void MoveToCursor()
