@@ -23,18 +23,7 @@ public class Mover : MonoBehaviour
 
     void Update()
     {
-
         UpdateAnimator();
-    }
-
-    public void MoveToCursor() 
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if(Physics.Raycast(ray, out hit))
-        {
-            MoveTo(hit.point);
-        }
     }
 
     public void MoveTo(Vector3 destination)
