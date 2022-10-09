@@ -14,7 +14,7 @@ namespace ProjectRevolt.Combat
             
         }
 
-        public void Attack() 
+        public void Attack(CombatTarget target) 
         {
             Debug.Log("Take that, statist scum!");
         }

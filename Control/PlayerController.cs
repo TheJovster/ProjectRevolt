@@ -33,14 +33,13 @@ namespace ProjectRevolt.Control
             RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
             foreach (RaycastHit hit in hits)
             {
-                CombatTarget combatTarget = hit.collider.GetComponent<CombatTarget>();
-                if (combatTarget == null) continue;
+                CombatTarget target = hit.collider.GetComponent<CombatTarget>();
+                if (target == null) continue;
 
                 if(Input.GetMouseButtonDown(0)) 
                 {
-                    fighter.Attack();
+                    fighter.Attack(target);
                 } 
-
             }
         }
 
