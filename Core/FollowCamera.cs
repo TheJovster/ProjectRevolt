@@ -2,18 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FollowCamera : MonoBehaviour
+namespace ProjectRevolt.Core 
 {
-    [SerializeField] private Transform target;
-    [SerializeField] private Vector3 cameraOffset;
-
-    void Start()
+    public class FollowCamera : MonoBehaviour
     {
-        
-    }
+        [SerializeField] private Transform target;
+        [SerializeField] private Vector3 cameraOffset;
 
-    void LateUpdate()
-    {
-        transform.position = target.position + cameraOffset;
+        void Start()
+        {
+
+        }
+
+        void LateUpdate()
+        {
+            transform.position = target.position + cameraOffset;
+        }
     }
 }
+

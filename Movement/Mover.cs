@@ -3,39 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Mover : MonoBehaviour
+namespace ProjectRevolt.Movement 
 {
-    //variables
-    //components
-    private Animator animator;
-
-    //navigation
-    private NavMeshAgent navMeshAgent;
-
-    
-
-
-    void Start()
+    public class Mover : MonoBehaviour
     {
-        navMeshAgent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-    }
+        //variables
+        //components
+        private Animator animator;
 
-    void Update()
-    {
-        UpdateAnimator();
-    }
+        //navigation
+        private NavMeshAgent navMeshAgent;
 
-    public void MoveTo(Vector3 destination)
-    {
-        navMeshAgent.destination = destination;
-    }
+        void Start()
+        {
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            animator = GetComponent<Animator>();
+        }
 
-    private void UpdateAnimator()
-    {
-        Vector3 velocity = navMeshAgent.velocity;
-        Vector3 localVelocity = transform.InverseTransformDirection(velocity);
-        float moveSpeed = localVelocity.z;
-        animator.SetFloat("MoveSpeed", moveSpeed, 0.1f, Time.deltaTime); //this does work
+        void Update()
+        {
+            UpdateAnimator();
+        }
+
+        public void MoveTo(Vector3 destination)
+        {
+            navMeshAgent.destination = destination;
+        }
+
+        private void UpdateAnimator()
+        {
+            Vector3 velocity = navMeshAgent.velocity;
+            Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+            float moveSpeed = localVelocity.z;
+            animator.SetFloat("MoveSpeed", moveSpeed, 0.1f, Time.deltaTime); //this does work
+        }
     }
 }
+
