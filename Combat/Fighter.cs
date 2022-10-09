@@ -71,6 +71,7 @@ namespace ProjectRevolt.Combat
         {
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
         }
+
     }
 }
 
