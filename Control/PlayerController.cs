@@ -43,9 +43,9 @@ namespace ProjectRevolt.Control
             RaycastHit hit;
             if (Physics.Raycast(GetMouseRay(), out hit))
             {
-                if (Input.GetMouseButtonDown(0)) 
+                if (Input.GetMouseButton(0)) 
                 {
-                    mover.MoveTo(hit.point);
+                    mover.StartMoveAction(hit.point);
                 }
                 return true;
             }

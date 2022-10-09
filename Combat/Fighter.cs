@@ -1,22 +1,42 @@
 using UnityEngine;
+using ProjectRevolt.Movement;
 
 namespace ProjectRevolt.Combat 
 {
     public class Fighter : MonoBehaviour
     {
+        [SerializeField] private float weaponRange = 2f;
+
+        private Transform target;
+        private Mover mover;
+
         private void Start()
         {
-            
+            mover = GetComponent<Mover>();
         }
 
         private void Update()
         {
-            
+            bool isInRange = Vector3.Distance(transform.position, target.position) < weaponRange;
+
+            if (target != null && !isInRange) 
+            {
+                mover.MoveTo(target.position);
+            }
+            else 
+            {
+                mover.Stop();
+            }
         }
 
-        public void Attack(CombatTarget target) 
+        public void Attack(CombatTarget combatTarget) 
         {
-            Debug.Log("Take that, statist scum!");
+            target = combatTarget.transform;
+        }
+
+        public void Cancel() 
+        {
+            target = null;
         }
     }
 }

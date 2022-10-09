@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using ProjectRevolt.Combat;
 
 namespace ProjectRevolt.Movement 
 {
@@ -10,6 +9,7 @@ namespace ProjectRevolt.Movement
         //variables
         //components
         private Animator animator;
+        private Fighter fighter;
 
         //navigation
         private NavMeshAgent navMeshAgent;
@@ -18,6 +18,7 @@ namespace ProjectRevolt.Movement
         {
             navMeshAgent = GetComponent<NavMeshAgent>();
             animator = GetComponent<Animator>();
+            fighter = GetComponent<Fighter>();
         }
 
         void Update()
@@ -25,9 +26,22 @@ namespace ProjectRevolt.Movement
             UpdateAnimator();
         }
 
+        public void StartMoveAction(Vector3 destination) 
+        {
+            fighter.Cancel();
+            MoveTo(destination);
+        }
+
         public void MoveTo(Vector3 destination)
         {
             navMeshAgent.destination = destination;
+            navMeshAgent.isStopped = false;
+            fighter.Cancel();
+        }
+
+        public void Stop() 
+        {
+            navMeshAgent.isStopped = true;
         }
 
         private void UpdateAnimator()
