@@ -31,8 +31,14 @@ namespace ProjectRevolt.Combat
             else
             {
                 mover.Cancel();
-                animator.SetTrigger("Attack");
+                AttackBehaviour();
             }
+        }
+
+        private void AttackBehaviour()
+        {
+            animator.SetTrigger("Attack");
+            //more stuff to add
         }
 
         private bool GetIsInRange()
