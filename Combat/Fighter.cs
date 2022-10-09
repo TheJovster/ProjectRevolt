@@ -9,6 +9,7 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float weaponRange = 2f;
 
         private Transform target;
+        private Animator animator; //is this redundant?
         private Mover mover;
         private ActionScheduler actionScheduler;
 
@@ -16,6 +17,7 @@ namespace ProjectRevolt.Combat
         {
             actionScheduler = GetComponent<ActionScheduler>();
             mover = GetComponent<Mover>();
+            animator = GetComponent<Animator>();
         }
 
         private void Update()
@@ -29,8 +31,7 @@ namespace ProjectRevolt.Combat
             else
             {
                 mover.Cancel();
-                mover.animator.SetTrigger("Attack");
-
+                animator.SetTrigger("Attack");
             }
         }
 

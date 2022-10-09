@@ -8,7 +8,7 @@ namespace ProjectRevolt.Movement
     {
         //variables
         //components
-        [HideInInspector] public Animator animator;
+        private Animator animator;
         private ActionScheduler actionScheduler;
 
         //navigation
