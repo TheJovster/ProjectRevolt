@@ -7,6 +7,8 @@ namespace ProjectRevolt.Combat
     public class Fighter : MonoBehaviour, IAction
     {
         [SerializeField] private float weaponRange = 2f;
+        [SerializeField] private float timeBetweenAttacks = .75f;
+        private float timeSinceLastAttack;
 
         private Transform target;
         private Animator animator; //is this redundant?
@@ -22,6 +24,8 @@ namespace ProjectRevolt.Combat
 
         private void Update()
         {
+            timeSinceLastAttack += Time.deltaTime;
+
             if (target == null) return;
 
             if (!GetIsInRange())
@@ -37,7 +41,11 @@ namespace ProjectRevolt.Combat
 
         private void AttackBehaviour()
         {
-            animator.SetTrigger("Attack");
+            if(timeSinceLastAttack >= timeBetweenAttacks) 
+            {
+                animator.SetTrigger("Attack");
+                timeSinceLastAttack = 0f;
+            }
             //more stuff to add
         }
 
