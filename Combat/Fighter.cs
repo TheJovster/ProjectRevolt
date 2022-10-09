@@ -29,6 +29,8 @@ namespace ProjectRevolt.Combat
             else
             {
                 mover.Cancel();
+                mover.animator.SetTrigger("Attack");
+
             }
         }
 
@@ -46,6 +48,13 @@ namespace ProjectRevolt.Combat
         public void Cancel() 
         {
             target = null;
+        }
+
+
+        //Animation event
+        private void Hit()
+        {
+            Debug.Log("You hit the enemy with your club. That's gotta hurt!");
         }
     }
 }
