@@ -15,11 +15,21 @@ namespace ProjectRevolt.Combat
         private Mover mover;
         private ActionScheduler actionScheduler;
 
+        //sound manager
+        private AudioSource audioSource;
+        [Header("Audio and Sound")]
+        [SerializeField]private AudioClip[] swingEffects;
+        [SerializeField]private AudioClip[] hitEffects;
+        [Range(.1f, .5f)][SerializeField] private float volumeChangeMultiplier = .2f;
+        [Range(.1f, .5f)][SerializeField] private float pitchChangeMultiplier = .2f;
+
+
         private void Start()
         {
             actionScheduler = GetComponent<ActionScheduler>();
             mover = GetComponent<Mover>();
             animator = GetComponent<Animator>();
+            audioSource = GetComponent<AudioSource>();
         }
 
         private void Update()
@@ -70,8 +80,19 @@ namespace ProjectRevolt.Combat
         private void Hit()
         {
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
+            int hitSFXIndex = Random.Range(0, swingEffects.Length);
+            audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
+            audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
+            audioSource.PlayOneShot(hitEffects[hitSFXIndex]);
         }
 
+        private void Swing() 
+        {
+            int swingSFXIndex = Random.Range(0, swingEffects.Length);
+            audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
+            audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
+            audioSource.PlayOneShot(swingEffects[swingSFXIndex]);
+        }
     }
 }
 
