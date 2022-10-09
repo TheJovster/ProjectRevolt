@@ -4,7 +4,7 @@ using ProjectRevolt.Movement;
 
 namespace ProjectRevolt.Combat 
 {
-    public class Fighter : MonoBehaviour
+    public class Fighter : MonoBehaviour, IAction
     {
         [SerializeField] private float weaponRange = 2f;
 
@@ -28,7 +28,7 @@ namespace ProjectRevolt.Combat
             }
             else
             {
-                mover.Stop();
+                mover.Cancel();
             }
         }
 
@@ -46,7 +46,6 @@ namespace ProjectRevolt.Combat
         public void Cancel() 
         {
             target = null;
-
         }
     }
 }

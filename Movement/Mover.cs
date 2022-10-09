@@ -1,16 +1,14 @@
 using UnityEngine;
 using UnityEngine.AI;
 using ProjectRevolt.Core;
-using ProjectRevolt.Combat;
 
 namespace ProjectRevolt.Movement 
 {
-    public class Mover : MonoBehaviour
+    public class Mover : MonoBehaviour, IAction
     {
         //variables
         //components
         private Animator animator;
-        private Fighter fighter;
         private ActionScheduler actionScheduler;
 
         //navigation
@@ -19,7 +17,6 @@ namespace ProjectRevolt.Movement
         void Start()
         {
             actionScheduler = GetComponent<ActionScheduler>();
-            fighter = GetComponent<Fighter>();
             navMeshAgent = GetComponent<NavMeshAgent>();
             animator = GetComponent<Animator>();
         }
@@ -31,7 +28,6 @@ namespace ProjectRevolt.Movement
 
         public void StartMoveAction(Vector3 destination) 
         {
-            fighter.Cancel();
             actionScheduler.StartAction(this);
             MoveTo(destination);
         }
@@ -42,7 +38,7 @@ namespace ProjectRevolt.Movement
             navMeshAgent.isStopped = false;
         }
 
-        public void Stop() 
+        public void Cancel() 
         {
             navMeshAgent.isStopped = true;
         }

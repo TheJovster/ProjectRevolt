@@ -4,7 +4,7 @@ namespace ProjectRevolt.Core
 {
     public class ActionScheduler : MonoBehaviour
     {
-        MonoBehaviour currentAction = null;
+        IAction currentAction = null;
 
         void Start()
         {
@@ -16,12 +16,12 @@ namespace ProjectRevolt.Core
 
         }
 
-        public void StartAction(MonoBehaviour action) 
+        public void StartAction(IAction action) 
         {
             if (currentAction == action) return;
             if(currentAction != null) 
             {
-                Debug.Log(currentAction + " cancelled");
+                currentAction.Cancel();
             }
             currentAction = action;
         }
