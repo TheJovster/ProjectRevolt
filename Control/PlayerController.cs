@@ -7,13 +7,16 @@ namespace ProjectRevolt.Control
     public class PlayerController : MonoBehaviour
     {
         Mover mover;
+        Fighter fighter;
 
         void Start()
         {
             mover = GetComponent<Mover>();
+            fighter = GetComponent<Fighter>();
         }
         void Update()
         {
+            InteractWithCombat();
             InteractWithMovement();
         }
 
@@ -25,14 +28,30 @@ namespace ProjectRevolt.Control
             }
         }
 
+        private void InteractWithCombat() 
+        {
+            RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.gameObject.GetComponent<CombatTarget>() != null) 
+                {
+                    fighter.Attack();
+                }
+            }
+        }
+
         private void MoveToCursor()
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(GetMouseRay(), out hit))
             {
                 mover.MoveTo(hit.point);
             }
+        }
+
+        private static Ray GetMouseRay()
+        {
+            return Camera.main.ScreenPointToRay(Input.mousePosition);
         }
     }
 }
