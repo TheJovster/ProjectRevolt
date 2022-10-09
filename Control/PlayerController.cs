@@ -1,5 +1,6 @@
 using UnityEngine;
 using ProjectRevolt.Movement;
+using ProjectRevolt.Combat;
 
 namespace ProjectRevolt.Control 
 {
@@ -12,6 +13,11 @@ namespace ProjectRevolt.Control
             mover = GetComponent<Mover>();
         }
         void Update()
+        {
+            InteractWithMovement();
+        }
+
+        private void InteractWithMovement()
         {
             if (Input.GetMouseButton(0))
             {
