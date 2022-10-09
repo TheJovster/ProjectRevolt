@@ -1,4 +1,5 @@
 using UnityEngine;
+using ProjectRevolt.Core;
 using ProjectRevolt.Movement;
 
 namespace ProjectRevolt.Combat 
@@ -9,9 +10,11 @@ namespace ProjectRevolt.Combat
 
         private Transform target;
         private Mover mover;
+        private ActionScheduler actionScheduler;
 
         private void Start()
         {
+            actionScheduler = GetComponent<ActionScheduler>();
             mover = GetComponent<Mover>();
         }
 
@@ -36,12 +39,14 @@ namespace ProjectRevolt.Combat
 
         public void Attack(CombatTarget combatTarget) 
         {
+            actionScheduler.StartAction(this);
             target = combatTarget.transform;
         }
 
         public void Cancel() 
         {
             target = null;
+
         }
     }
 }
