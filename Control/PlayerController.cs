@@ -27,7 +27,8 @@ namespace ProjectRevolt.Control
             foreach (RaycastHit hit in hits)
             {
                 CombatTarget target = hit.collider.GetComponent<CombatTarget>();
-                if (target == null) continue;
+                if(target == null) continue;
+/*                if(!fighter.CanAttack()) continue;*/
 
                 if(Input.GetMouseButtonDown(0)) 
                 {

@@ -48,9 +48,17 @@ namespace ProjectRevolt.Combat
             else
             {
                 mover.Cancel();
-
                 AttackBehaviour();
             }
+        }
+
+        public bool CanAttack() 
+        {
+            if (target != null && !target.IsDead())
+            {
+                return true;
+            }
+            else return false;
         }
 
         private void AttackBehaviour()
@@ -88,7 +96,11 @@ namespace ProjectRevolt.Combat
         private void Hit()
         {
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
-            target.TakeDamage(weaponDamage);
+            if (target != null)
+            {
+                target.TakeDamage(weaponDamage);
+            }
+            else return;
             int hitSFXIndex = Random.Range(0, swingEffects.Length);
             audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
             audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
