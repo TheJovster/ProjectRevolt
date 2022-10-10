@@ -48,17 +48,19 @@ namespace ProjectRevolt.Combat
             else
             {
                 mover.Cancel();
+
                 AttackBehaviour();
             }
         }
 
         private void AttackBehaviour()
         {
-            if(timeSinceLastAttack > timeBetweenAttacks) 
+            Vector3 lookAtPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
+            transform.LookAt(lookAtPosition);
+            if (timeSinceLastAttack > timeBetweenAttacks) 
             {
                 animator.SetTrigger("Attack");
                 timeSinceLastAttack = 0f;
-             
             }
             //more stuff to add
         }
