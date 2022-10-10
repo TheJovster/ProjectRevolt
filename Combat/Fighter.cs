@@ -39,6 +39,7 @@ namespace ProjectRevolt.Combat
             timeSinceLastAttack += Time.deltaTime;
 
             if (target == null) return;
+            if (target.IsDead()) return;
 
             if (!GetIsInRange())
             {
@@ -85,17 +86,7 @@ namespace ProjectRevolt.Combat
         private void Hit()
         {
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
-            if (target == null)
-            {
-                Cancel();
-                return;
-            }
-            else if (!target.GetComponent<Health>().IsDead())
-            {
-                target.GetComponent<Health>().TakeDamage(weaponDamage); //needs a passthrough, additional functionality                                                    
-                //Note to future me: I've done it differently than the course video - I'm using animation events to trigger attacks and damamge.
-            }
-
+            target.TakeDamage(weaponDamage);
             int hitSFXIndex = Random.Range(0, swingEffects.Length);
             audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
             audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
