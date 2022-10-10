@@ -70,6 +70,7 @@ namespace ProjectRevolt.Combat
         {
             actionScheduler.StartAction(this);
             target = combatTarget.transform;
+
         }
 
         public void Cancel() 
@@ -82,16 +83,20 @@ namespace ProjectRevolt.Combat
         private void Hit()
         {
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
-            if (target != null && target.GetComponent<Health>() != null)
+            if (GetIsInRange()) 
             {
-                target.GetComponent<Health>().TakeDamage(weaponDamage); //needs a passthrough, additional functionality
-                //Note to future me: I've done it differently than the course video - I'm using animation events to trigger attacks and damamge.
-                //I'll try to do it in the attackbehaviour like recommended and see if it works better. If not, I'll reinstate this solution.
+                if (target != null && target.GetComponent<Health>() != null)
+                {
+                    target.GetComponent<Health>().TakeDamage(weaponDamage); //needs a passthrough, additional functionality
+                                                                            //Note to future me: I've done it differently than the course video - I'm using animation events to trigger attacks and damamge.
+                                                                            //I'll try to do it in the attackbehaviour like recommended and see if it works better. If not, I'll reinstate this solution.
+                }
+                int hitSFXIndex = Random.Range(0, swingEffects.Length);
+                audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
+                audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
+                audioSource.PlayOneShot(hitEffects[hitSFXIndex]);
+
             }
-            int hitSFXIndex = Random.Range(0, swingEffects.Length);
-            audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
-            audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
-            audioSource.PlayOneShot(hitEffects[hitSFXIndex]);
         }
 
         private void Swing() 
