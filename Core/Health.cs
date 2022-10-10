@@ -8,7 +8,7 @@ public class Health : MonoBehaviour
     [Header("Health Variables")]
     [SerializeField] private float maxHealth = 50f;
     private float currentHealth;
-    [HideInInspector]public bool isAlive = true;
+    private bool isDead = false;
 
     //animation
     private Animator animator;
@@ -37,20 +37,20 @@ public class Health : MonoBehaviour
         
     }
 
+    public bool IsDead() 
+    {
+        return isDead;
+    }
+
     public void TakeDamage(float damageToTake) 
     {
-        if (isAlive)
+        if (!IsDead())
         {
-
             bloodFX.Play();
             currentHealth -= damageToTake;
             if (currentHealth <= 0)
             {
-                currentHealth = 0f;
-                animator.SetTrigger("Die"); //might want to substitute this with a ragdoll?
-                audioSource.PlayOneShot(deathSFX);
-                isAlive = false;
-                GetComponent<CapsuleCollider>().enabled = false;
+                Die();
             }
             else 
             {
@@ -63,5 +63,14 @@ public class Health : MonoBehaviour
         {
             return;
         }
+    }
+
+    private void Die()
+    {
+        currentHealth = 0f;
+        animator.SetTrigger("Die"); //might want to substitute this with a ragdoll?
+        audioSource.PlayOneShot(deathSFX);
+        isDead = true;
+        GetComponent<CapsuleCollider>().enabled = false;
     }
 }

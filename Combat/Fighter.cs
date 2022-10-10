@@ -1,6 +1,7 @@
 using UnityEngine;
 using ProjectRevolt.Core;
 using ProjectRevolt.Movement;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace ProjectRevolt.Combat 
 {
@@ -11,7 +12,7 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float timeBetweenAttacks = .75f;
         private float timeSinceLastAttack;
 
-        private Transform target;
+        private Health target;
         private Animator animator; //is this redundant?
         private Mover mover;
         private ActionScheduler actionScheduler;
@@ -41,7 +42,7 @@ namespace ProjectRevolt.Combat
 
             if (!GetIsInRange())
             {
-                mover.MoveTo(target.position);
+                mover.MoveTo(target.transform.position);
             }
             else
             {
@@ -63,13 +64,13 @@ namespace ProjectRevolt.Combat
 
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, target.position) < weaponRange;
+            return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
         }
 
         public void Attack(CombatTarget combatTarget)
         {
             actionScheduler.StartAction(this);
-            target = combatTarget.transform;
+            target = combatTarget.GetComponent<Health>();
 
         }
 
@@ -84,17 +85,22 @@ namespace ProjectRevolt.Combat
         private void Hit()
         {
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
-
-            if (target != null && target.GetComponent<Health>() != null)
+            if (target == null)
             {
-                target.GetComponent<Health>().TakeDamage(weaponDamage); //needs a passthrough, additional functionality
-                                                                        //Note to future me: I've done it differently than the course video - I'm using animation events to trigger attacks and damamge.
+                Cancel();
+                return;
             }
+            else if (!target.GetComponent<Health>().IsDead())
+            {
+                target.GetComponent<Health>().TakeDamage(weaponDamage); //needs a passthrough, additional functionality                                                    
+                //Note to future me: I've done it differently than the course video - I'm using animation events to trigger attacks and damamge.
+            }
+
             int hitSFXIndex = Random.Range(0, swingEffects.Length);
             audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
             audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
             audioSource.PlayOneShot(hitEffects[hitSFXIndex]);
-            if (target.GetComponent<Health>().isAlive == false)
+            if (target.GetComponent<Health>().IsDead())
             {
                 Cancel();
             }
