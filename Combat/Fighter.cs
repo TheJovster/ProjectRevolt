@@ -52,13 +52,12 @@ namespace ProjectRevolt.Combat
             }
         }
 
-        public bool CanAttack() 
+        public bool CanAttack(CombatTarget combatTarget) 
         {
-            if (target != null && !target.IsDead())
-            {
-                return true;
-            }
-            else return false;
+            if (combatTarget == null) return false;
+
+            Health combatTargetToTest = combatTarget.GetComponent<Health>();
+            return combatTarget != null && !combatTargetToTest.IsDead();
         }
 
         private void AttackBehaviour()
