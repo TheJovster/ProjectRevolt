@@ -41,9 +41,7 @@ public class Health : MonoBehaviour
     {
         if (isAlive)
         {
-            int takeDamageSFXIndex = Random.Range(0, takeDamageClips.Length);
-            audioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
-            animator.SetTrigger("TakeDamage");
+
             bloodFX.Play();
             currentHealth -= damageToTake;
             if (currentHealth <= 0)
@@ -54,7 +52,16 @@ public class Health : MonoBehaviour
                 isAlive = false;
                 GetComponent<CapsuleCollider>().enabled = false;
             }
+            else 
+            {
+                int takeDamageSFXIndex = Random.Range(0, takeDamageClips.Length);
+                audioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
+                animator.SetTrigger("TakeDamage");
+            }
         }
-        else return;
+        else 
+        {
+            return;
+        }
     }
 }
