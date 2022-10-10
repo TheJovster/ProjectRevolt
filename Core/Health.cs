@@ -71,6 +71,6 @@ public class Health : MonoBehaviour
         animator.SetTrigger("Die"); //might want to substitute this with a ragdoll?
         audioSource.PlayOneShot(deathSFX);
         isDead = true;
-        GetComponent<CapsuleCollider>().enabled = false;
+        /*GetComponent<CapsuleCollider>().enabled = false;*/
     }
 }
