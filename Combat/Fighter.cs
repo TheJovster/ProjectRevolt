@@ -92,8 +92,8 @@ namespace ProjectRevolt.Combat
 
         public void Cancel() 
         {
-            animator.SetTrigger("StopAttack");
             animator.ResetTrigger("Attack");
+            animator.SetTrigger("StopAttack");
             target = null;
         }
 
