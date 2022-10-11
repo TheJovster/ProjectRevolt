@@ -64,12 +64,18 @@ namespace ProjectRevolt.Combat
         {
             Vector3 lookAtPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
             transform.LookAt(lookAtPosition);
-            if (timeSinceLastAttack > timeBetweenAttacks) 
+            if (timeSinceLastAttack > timeBetweenAttacks)
             {
-                animator.SetTrigger("Attack");
+                TriggerAttack();
                 timeSinceLastAttack = 0f;
             }
             //more stuff to add
+        }
+
+        private void TriggerAttack()
+        {
+            animator.ResetTrigger("StopAttack");
+            animator.SetTrigger("Attack");
         }
 
         private bool GetIsInRange()
@@ -87,7 +93,6 @@ namespace ProjectRevolt.Combat
         public void Cancel() 
         {
             animator.SetTrigger("StopAttack");
-            animator.ResetTrigger("StopAttack");
             target = null;
         }
 
