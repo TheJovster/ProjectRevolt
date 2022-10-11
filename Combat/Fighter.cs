@@ -72,12 +72,6 @@ namespace ProjectRevolt.Combat
             //more stuff to add
         }
 
-        private void TriggerAttack()
-        {
-            animator.ResetTrigger("StopAttack");
-            animator.SetTrigger("Attack");
-        }
-
         private bool GetIsInRange()
         {
             return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
@@ -90,11 +84,23 @@ namespace ProjectRevolt.Combat
 
         }
 
-        public void Cancel() 
+        public void Cancel()
+        {
+            StopAttack();
+            target = null;
+        }
+
+        //Animation triggers
+        private void TriggerAttack()
+        {
+            animator.ResetTrigger("StopAttack");
+            animator.SetTrigger("Attack");
+        }
+
+        private void StopAttack()
         {
             animator.ResetTrigger("Attack");
             animator.SetTrigger("StopAttack");
-            target = null;
         }
 
 
