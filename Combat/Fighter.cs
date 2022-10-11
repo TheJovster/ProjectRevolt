@@ -107,10 +107,7 @@ namespace ProjectRevolt.Combat
         //Animation event
         private void Hit()
         {
-            if (target == null) 
-            {
-                return;
-            }
+            if (target == null) return;
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
             target.TakeDamage(weaponDamage);
             int hitSFXIndex = Random.Range(0, swingEffects.Length);
