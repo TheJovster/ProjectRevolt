@@ -107,12 +107,12 @@ namespace ProjectRevolt.Combat
         //Animation event
         private void Hit()
         {
-            Debug.Log("You hit the enemy with your club. That's gotta hurt!");
-            if (target != null)
+            if (target == null) 
             {
-                target.TakeDamage(weaponDamage);
+                return;
             }
-            else return;
+            Debug.Log("You hit the enemy with your club. That's gotta hurt!");
+            target.TakeDamage(weaponDamage);
             int hitSFXIndex = Random.Range(0, swingEffects.Length);
             audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
             audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
