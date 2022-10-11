@@ -8,7 +8,11 @@ namespace ProjectRevolt.Control
     public class AIController : MonoBehaviour
     {
         //variables
+        private Vector3 guardPosition;
         [SerializeField] private float chaseDistance;
+        [SerializeField] private float suspicionTime = 5f;
+        [SerializeField] private float guardTime = 3f;
+        private float timeElapsed;
 
         //components
         private Fighter fighter;
@@ -24,10 +28,13 @@ namespace ProjectRevolt.Control
             mover = GetComponent<Mover>();
             health = GetComponent<Health>();
             player = GameObject.FindWithTag("Player");
+
+            guardPosition = transform.position;
         }
 
         void Update()
         {
+            
             if (health.IsDead())
             {
                 return;
@@ -37,6 +44,10 @@ namespace ProjectRevolt.Control
                 Debug.Log(this.name + " should give chase.");
                 fighter.Attack(player);
                 //add chase behaviour here
+            }
+            else 
+            {
+                mover.StartMoveAction(guardPosition);
             }
         }
 
@@ -58,7 +69,7 @@ namespace ProjectRevolt.Control
             return Vector3.Distance(player.transform.position, transform.position) < chaseDistance;
         }
 
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, chaseDistance);
