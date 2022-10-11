@@ -1,6 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using ProjectRevolt.Movement;
+using ProjectRevolt.Combat;
+using ProjectRevolt.Core;
 
 namespace ProjectRevolt.Control 
 {
@@ -10,19 +11,31 @@ namespace ProjectRevolt.Control
         [SerializeField] private float chaseDistance;
 
         //components
+        private Fighter fighter;
+        private Mover mover;
+        private Health health;
 
         //game objects
+        private GameObject player;
 
         void Start()
         {
-            
+            fighter = GetComponent<Fighter>();
+            mover = GetComponent<Mover>();
+            health = GetComponent<Health>();
+            player = GameObject.FindWithTag("Player");
         }
 
         void Update()
         {
-            if (DistanceToPlayer() <= chaseDistance)
+            if (health.IsDead())
+            {
+                return;
+            }
+            if (InAttackRangeOfPlayer() && fighter.CanAttack(player))
             {
                 Debug.Log(this.name + " should give chase.");
+                fighter.Attack(player);
                 //add chase behaviour here
             }
         }
@@ -40,10 +53,9 @@ namespace ProjectRevolt.Control
         //attack/aggression behaviour
 
         //calculations
-        private float DistanceToPlayer() 
+        private bool InAttackRangeOfPlayer() 
         {
-            Transform player = GameObject.FindWithTag("Player").transform;
-            return Vector3.Distance(player.position, transform.position);
+            return Vector3.Distance(player.transform.position, transform.position) < chaseDistance;
         }
     }
 

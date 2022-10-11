@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using ProjectRevolt.Core;
+using System.Runtime.CompilerServices;
 
 namespace ProjectRevolt.Movement 
 {
@@ -10,6 +11,7 @@ namespace ProjectRevolt.Movement
         //components
         private Animator animator;
         private ActionScheduler actionScheduler;
+        private Health health;
 
         //navigation
         private NavMeshAgent navMeshAgent;
@@ -23,6 +25,7 @@ namespace ProjectRevolt.Movement
         void Start()
         {
             actionScheduler = GetComponent<ActionScheduler>();
+            health = GetComponent<Health>();
             navMeshAgent = GetComponent<NavMeshAgent>();
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
@@ -30,6 +33,7 @@ namespace ProjectRevolt.Movement
 
         void Update()
         {
+            navMeshAgent.enabled = !health.IsDead();
             UpdateAnimator();
         }
 

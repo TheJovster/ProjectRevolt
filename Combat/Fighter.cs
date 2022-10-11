@@ -10,7 +10,7 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float weaponRange = 2f;
         [SerializeField] private float weaponDamage = 20f;
         [SerializeField] private float timeBetweenAttacks = .75f;
-        private float timeSinceLastAttack;
+        private float timeSinceLastAttack = Mathf.Infinity;
 
         private Health target;
         private Animator animator; //is this redundant?
@@ -51,8 +51,14 @@ namespace ProjectRevolt.Combat
                 AttackBehaviour();
             }
         }
+        public void Attack(GameObject combatTarget)
+        {
+            actionScheduler.StartAction(this);
+            target = combatTarget.GetComponent<Health>();
 
-        public bool CanAttack(CombatTarget combatTarget) 
+        }
+
+        public bool CanAttack(GameObject combatTarget) 
         {
             if (combatTarget == null) return false;
 
@@ -77,12 +83,7 @@ namespace ProjectRevolt.Combat
             return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
         }
 
-        public void Attack(CombatTarget combatTarget)
-        {
-            actionScheduler.StartAction(this);
-            target = combatTarget.GetComponent<Health>();
 
-        }
 
         public void Cancel()
         {

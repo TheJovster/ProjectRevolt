@@ -3,74 +3,83 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Health : MonoBehaviour
+namespace ProjectRevolt.Core 
 {
-    [Header("Health Variables")]
-    [SerializeField] private float maxHealth = 50f;
-    private float currentHealth;
-    private bool isDead = false;
-
-    //animation
-    private Animator animator;
-
-    //Audio
-    [Header("Audio")]
-    [SerializeField] private AudioClip[] takeDamageClips;
-    [SerializeField] private AudioClip deathSFX;
-    private AudioSource audioSource;
-
-    //visual FX
-    [Header("VFX")]
-    [SerializeField] private ParticleSystem bloodFX;
-
-    // Start is called before the first frame update
-    void Start()
+    public class Health : MonoBehaviour, IAction
     {
-        currentHealth = maxHealth;
-        animator = GetComponent<Animator>();
-        audioSource = GetComponent<AudioSource>();
-    }
+        [Header("Health Variables")]
+        [SerializeField] private float maxHealth = 50f;
+        private float currentHealth;
+        private bool isDead = false;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+        //animation
+        private Animator animator;
 
-    public bool IsDead() 
-    {
-        return isDead;
-    }
+        //Audio
+        [Header("Audio")]
+        [SerializeField] private AudioClip[] takeDamageClips;
+        [SerializeField] private AudioClip deathSFX;
+        private AudioSource audioSource;
 
-    public void TakeDamage(float damageToTake) 
-    {
-        if (!IsDead())
+        //visual FX
+        [Header("VFX")]
+        [SerializeField] private ParticleSystem bloodFX;
+
+        // Start is called before the first frame update
+        void Start()
         {
-            bloodFX.Play();
-            currentHealth -= damageToTake;
-            if (currentHealth <= 0)
+            currentHealth = maxHealth;
+            animator = GetComponent<Animator>();
+            audioSource = GetComponent<AudioSource>();
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
+
+        public bool IsDead()
+        {
+            return isDead;
+        }
+
+        public void TakeDamage(float damageToTake)
+        {
+            if (!IsDead())
             {
-                Die();
+                bloodFX.Play();
+                currentHealth -= damageToTake;
+                if (currentHealth <= 0)
+                {
+                    Die();
+                }
+                else
+                {
+                    int takeDamageSFXIndex = Random.Range(0, takeDamageClips.Length);
+                    audioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
+                    animator.SetTrigger("TakeDamage");
+                }
             }
-            else 
+            else
             {
-                int takeDamageSFXIndex = Random.Range(0, takeDamageClips.Length);
-                audioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
-                animator.SetTrigger("TakeDamage");
+                return;
             }
         }
-        else 
-        {
-            return;
-        }
-    }
 
-    private void Die()
-    {
-        currentHealth = 0f;
-        animator.SetTrigger("Die"); //might want to substitute this with a ragdoll?
-        audioSource.PlayOneShot(deathSFX);
-        isDead = true;
-        /*GetComponent<CapsuleCollider>().enabled = false;*/
+        private void Die()
+        {
+            currentHealth = 0f;
+            animator.SetTrigger("Die"); //might want to substitute this with a ragdoll?
+            audioSource.PlayOneShot(deathSFX);
+            isDead = true;
+            GetComponent<ActionScheduler>().CancelCurrentAction();
+        }
+
+        public void Cancel()
+        {
+            
+        }
     }
 }
+

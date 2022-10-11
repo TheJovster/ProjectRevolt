@@ -1,6 +1,7 @@
 using UnityEngine;
 using ProjectRevolt.Movement;
 using ProjectRevolt.Combat;
+using ProjectRevolt.Core;
 
 namespace ProjectRevolt.Control 
 {
@@ -8,16 +9,22 @@ namespace ProjectRevolt.Control
     {
         Mover mover;
         Fighter fighter;
+        Health health;
 
         void Start()
         {
             mover = GetComponent<Mover>();
             fighter = GetComponent<Fighter>();
+            health = GetComponent<Health>();
         }
         void Update()
         {
-            if(InteractWithCombat()) return;
-            if(InteractWithMovement()) return;
+            if (health.IsDead())
+            {
+                return;
+            }
+            if (InteractWithCombat()) return;
+            if (InteractWithMovement()) return;
             Debug.Log("Nothing to do");
         }
 
@@ -27,15 +34,15 @@ namespace ProjectRevolt.Control
             foreach (RaycastHit hit in hits)
             {
                 CombatTarget target = hit.collider.GetComponent<CombatTarget>();
-                if (!fighter.CanAttack(target)) 
+                if (target == null) continue;
+
+                if (!fighter.CanAttack(target.gameObject)) 
                 {
                     continue;
                 }
-                
-
                 if(Input.GetMouseButtonDown(0)) 
                 {
-                    fighter.Attack(target);
+                    fighter.Attack(target.gameObject);
                 }
                 return true;
             }
