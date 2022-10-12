@@ -12,11 +12,14 @@ namespace ProjectRevolt.Control
         private Vector3 guardPosition;
 
         [SerializeField] private float chaseDistance;
-        [SerializeField] private float timeSinceLastSawPlayer = Mathf.Infinity;
+        
         [SerializeField] private float suspicionTime = 5f;
+        [SerializeField] private float dwellTime = 4f;
         [SerializeField] private float waypointTolerance = 1f;
 
         private int currentWaypointIndex = 0;
+        private float timeSpentAtWaypoint = Mathf.Infinity;
+        private float timeSinceLastSawPlayer = Mathf.Infinity;
 
         //components
         private Fighter fighter;
@@ -46,10 +49,9 @@ namespace ProjectRevolt.Control
             }
             if (InAttackRangeOfPlayer() && fighter.CanAttack(player)) //attack and chase behaviour
             {
-                timeSinceLastSawPlayer = 0;
                 AttackBehaviour();
             }
-            else if(timeSinceLastSawPlayer < suspicionTime) //suspicion behaviour
+            else if (timeSinceLastSawPlayer < suspicionTime) //suspicion behaviour
             {
                 SuspicionBehaviour();
             }
@@ -57,22 +59,20 @@ namespace ProjectRevolt.Control
             {
                 PatrolBehaviour();
             }
-            timeSinceLastSawPlayer += Time.deltaTime;
-
+            UpdateTimers();
         }
+
 
         //behaviours
-
         private void AttackBehaviour()
         {
+            timeSinceLastSawPlayer = 0;
             fighter.Attack(player);
         }
-
         private void SuspicionBehaviour()
         {
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
-
         private void PatrolBehaviour()
         {
             Vector3 nextPosition = guardPosition;
@@ -80,11 +80,16 @@ namespace ProjectRevolt.Control
             {
                 if(AtWaypoint()) 
                 {
+                    timeSpentAtWaypoint = 0;
                     CycleWaypoint();
                 }
                 nextPosition = GetCurrentWayPoint();
             }
-            mover.StartMoveAction(nextPosition);
+            if (timeSpentAtWaypoint > dwellTime)
+            {
+                mover.StartMoveAction(nextPosition);
+            }
+            
         }
 
         //Patrol Behaviour methods
@@ -93,12 +98,11 @@ namespace ProjectRevolt.Control
             float distanceToWaypoint = Vector3.Distance(transform.position, GetCurrentWayPoint());
             return distanceToWaypoint < waypointTolerance;
         }
-
         private void CycleWaypoint()
         {
             currentWaypointIndex = patrolPath.GetNextIndex(currentWaypointIndex);
+            timeSpentAtWaypoint = 0;
         }
-
         private Vector3 GetCurrentWayPoint()
         {
             return patrolPath.GetWaypoint(currentWaypointIndex);
@@ -109,12 +113,16 @@ namespace ProjectRevolt.Control
         {
             return Vector3.Distance(player.transform.position, transform.position) < chaseDistance;
         }
-
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, chaseDistance);
             
+        }
+        private void UpdateTimers()
+        {
+            timeSinceLastSawPlayer += Time.deltaTime;
+            timeSpentAtWaypoint += Time.deltaTime;
         }
     }
 

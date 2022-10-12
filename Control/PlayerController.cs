@@ -40,7 +40,7 @@ namespace ProjectRevolt.Control
                 {
                     continue;
                 }
-                if(Input.GetMouseButtonDown(0)) 
+                if(Input.GetMouseButton(0)) 
                 {
                     fighter.Attack(target.gameObject);
                 }
