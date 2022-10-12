@@ -9,10 +9,10 @@ namespace ProjectRevolt.Control
     {
         //variables
         private Vector3 guardPosition;
+
         [SerializeField] private float chaseDistance;
+        [SerializeField] private float timeSinceLastSawPlayer = Mathf.Infinity;
         [SerializeField] private float suspicionTime = 5f;
-        [SerializeField] private float guardTime = 3f;
-        private float timeElapsed;
 
         //components
         private Fighter fighter;
@@ -34,34 +34,44 @@ namespace ProjectRevolt.Control
 
         void Update()
         {
-            
-            if (health.IsDead())
+            //timer
+            if (health.IsDead()) //if actor is dead
             {
                 return;
             }
-            if (InAttackRangeOfPlayer() && fighter.CanAttack(player))
+            if (InAttackRangeOfPlayer() && fighter.CanAttack(player)) //attack and chase behaviour
             {
-                Debug.Log(this.name + " should give chase.");
-                fighter.Attack(player);
-                //add chase behaviour here
+                timeSinceLastSawPlayer = 0;
+                AttackBehaviour();
             }
-            else 
+            else if(timeSinceLastSawPlayer < suspicionTime) //suspicion behaviour
             {
-                mover.StartMoveAction(guardPosition);
+                SuspicionBehaviour();
             }
+            else //return to original position/route
+            {
+                GuardBehaviour();
+            }
+            timeSinceLastSawPlayer += Time.deltaTime;
+
         }
 
-        //behaviour methods
+        //behaviours
 
-        //guard behaviour
+        private void AttackBehaviour()
+        {
+            fighter.Attack(player);
+        }
 
-        //patrol behaviour
+        private void SuspicionBehaviour()
+        {
+            GetComponent<ActionScheduler>().CancelCurrentAction();
+        }
 
-        //suspicion behaviour
-
-        //chase behaviour
-
-        //attack/aggression behaviour
+        private void GuardBehaviour()
+        {
+            mover.StartMoveAction(guardPosition);
+        }
 
         //calculations
         private bool InAttackRangeOfPlayer() 

@@ -58,6 +58,7 @@ namespace ProjectRevolt.Core
                 {
                     int takeDamageSFXIndex = Random.Range(0, takeDamageClips.Length);
                     audioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
+                    animator.ResetTrigger("Attack");
                     animator.SetTrigger("TakeDamage");
                 }
             }
