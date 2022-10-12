@@ -2,6 +2,7 @@ using UnityEngine;
 using ProjectRevolt.Movement;
 using ProjectRevolt.Combat;
 using ProjectRevolt.Core;
+using System;
 
 namespace ProjectRevolt.Control 
 {
@@ -13,11 +14,15 @@ namespace ProjectRevolt.Control
         [SerializeField] private float chaseDistance;
         [SerializeField] private float timeSinceLastSawPlayer = Mathf.Infinity;
         [SerializeField] private float suspicionTime = 5f;
+        [SerializeField] private float waypointTolerance = 1f;
+
+        private int currentWaypointIndex = 0;
 
         //components
         private Fighter fighter;
         private Mover mover;
         private Health health;
+        [SerializeField] private PatrolPath patrolPath;
 
         //game objects
         private GameObject player;
@@ -50,7 +55,7 @@ namespace ProjectRevolt.Control
             }
             else //return to original position/route
             {
-                GuardBehaviour();
+                PatrolBehaviour();
             }
             timeSinceLastSawPlayer += Time.deltaTime;
 
@@ -68,9 +73,35 @@ namespace ProjectRevolt.Control
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 
-        private void GuardBehaviour()
+        private void PatrolBehaviour()
         {
-            mover.StartMoveAction(guardPosition);
+            Vector3 nextPosition = guardPosition;
+            if(patrolPath != null) 
+            {
+                if(AtWaypoint()) 
+                {
+                    CycleWaypoint();
+                }
+                nextPosition = GetCurrentWayPoint();
+            }
+            mover.StartMoveAction(nextPosition);
+        }
+
+        //Patrol Behaviour methods
+        private bool AtWaypoint()
+        {
+            float distanceToWaypoint = Vector3.Distance(transform.position, GetCurrentWayPoint());
+            return distanceToWaypoint < waypointTolerance;
+        }
+
+        private void CycleWaypoint()
+        {
+            currentWaypointIndex = patrolPath.GetNextIndex(currentWaypointIndex);
+        }
+
+        private Vector3 GetCurrentWayPoint()
+        {
+            return patrolPath.GetWaypoint(currentWaypointIndex);
         }
 
         //calculations
