@@ -7,6 +7,7 @@ namespace ProjectRevolt.Control
 {
     public class PlayerController : MonoBehaviour
     {
+        [SerializeField] private Camera mainCamera;
         Mover mover;
         Fighter fighter;
         Health health;
