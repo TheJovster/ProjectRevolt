@@ -1,12 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
 namespace ProjectRevolt.SceneManagement 
 {
     public class Portal : MonoBehaviour
     {
+        enum DestinationIdentifier 
+        {
+            A,
+            B,
+            C,
+            D
+        }
+
+        [SerializeField] private DestinationIdentifier destination;
         [SerializeField] private int sceneToLoad = -1;
         public Transform spawnPoint;
 
@@ -29,6 +39,11 @@ namespace ProjectRevolt.SceneManagement
 
         private IEnumerator Transition() 
         {
+            if (sceneToLoad < 0)
+            {
+                Debug.LogError("Scene to load not set.");
+                yield break;
+            }
             DontDestroyOnLoad(gameObject);
             yield return SceneManager.LoadSceneAsync(sceneToLoad);
 
@@ -46,6 +61,8 @@ namespace ProjectRevolt.SceneManagement
                 {
                     continue;
                 }
+                if (portal.destination != destination) continue;
+
                 else return portal;
             }
             return null;
@@ -54,7 +71,7 @@ namespace ProjectRevolt.SceneManagement
         private void UpdatePlayer(Portal otherPortal) 
         {
             GameObject player = GameObject.FindWithTag("Player");
-            player.transform.position = otherPortal.spawnPoint.position;
+            player.GetComponent<NavMeshAgent>().Warp(otherPortal.spawnPoint.position);
             player.transform.rotation = otherPortal.spawnPoint.rotation;
         }
     }
