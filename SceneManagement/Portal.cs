@@ -18,6 +18,10 @@ namespace ProjectRevolt.SceneManagement
 
         [SerializeField] private DestinationIdentifier destination;
         [SerializeField] private int sceneToLoad = -1;
+
+        [SerializeField] private float fadeOutTime = 2f;
+        [SerializeField] private float fadeInTime = 2f;
+        [SerializeField] private float fadeWaitTime = .5f;
         public Transform spawnPoint;
 
         private void OnTriggerEnter(Collider other)
@@ -45,11 +49,16 @@ namespace ProjectRevolt.SceneManagement
                 yield break;
             }
             DontDestroyOnLoad(gameObject);
-            yield return SceneManager.LoadSceneAsync(sceneToLoad);
 
+            Fader fader = FindObjectOfType<Fader>();
+
+            yield return fader.FadeOut(fadeOutTime);
+            yield return SceneManager.LoadSceneAsync(sceneToLoad);
             Portal otherPortal = GetOtherPortal();
             UpdatePlayer(otherPortal);
 
+            yield return new WaitForSeconds(fadeWaitTime);
+            yield return fader.FadeIn(fadeOutTime);
             Destroy(gameObject);
         }
 

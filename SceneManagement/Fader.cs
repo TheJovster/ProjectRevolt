@@ -1,18 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public class Fader : MonoBehaviour
+namespace ProjectRevolt.SceneManagement 
 {
-    // Start is called before the first frame update
-    void Start()
+    public class Fader : MonoBehaviour
     {
-        
-    }
+        private CanvasGroup canvasGroup;
+        void Start()
+        {
+            canvasGroup = GetComponent<CanvasGroup>();
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        void Update()
+        {
+
+        }
+
+        public IEnumerator FadeOut(float time)
+        {
+            while(canvasGroup.alpha < 1)
+            {
+                //float timeToFadeout = 1 / (time / Time.deltaTime);
+                canvasGroup.alpha += Time.deltaTime / time;
+                yield return null;
+            }
+
+        }
+
+        public IEnumerator FadeIn(float time) 
+        {
+            while(canvasGroup.alpha > 0) 
+            {
+                canvasGroup.alpha -= Time.deltaTime / time;
+                yield return null;
+            }
+            
+        }
+
+
+
     }
 }
+
