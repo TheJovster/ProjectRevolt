@@ -9,23 +9,29 @@ namespace ProjectRevolt.SceneManagement
     {
         [SerializeField] private int sceneToLoad = -1;
 
-        void Start()
-        {
-
-        }
-
-        void Update()
-        {
-
-        }
-
         private void OnTriggerEnter(Collider other)
         {
             if(other.tag == "Player") 
             {
-                Debug.Log("You set out to the Goblin Forest");
-                SceneManager.LoadSceneAsync(sceneToLoad);
+                if(sceneToLoad == 1) 
+                {
+                    Debug.Log("You set out to the Goblin Forest");
+                }
+                else if(sceneToLoad == 0) 
+                {
+                    Debug.Log("You set out to the Burned Village");
+                }
+                
+                StartCoroutine(Transition());
             }
+        }
+
+        private IEnumerator Transition() 
+        {
+            DontDestroyOnLoad(gameObject);
+            yield return SceneManager.LoadSceneAsync(sceneToLoad);
+            Debug.Log("Scene Loaded");
+            Destroy(gameObject);
         }
     }
 }
