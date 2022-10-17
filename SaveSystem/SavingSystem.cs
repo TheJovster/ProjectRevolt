@@ -3,32 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Text;
+using System;
 
 namespace ProjectRevolt.Saving 
 {
     public class SavingSystem : MonoBehaviour
     {
-        public void Save(string saveFile) 
+        public void Save(string saveFile) //serializes and encodes data
         {
             string path = GetPathFromSaveFile(saveFile);
             Debug.Log("Saving to " + path);
-            using (FileStream stream = File.Open(path, FileMode.Create)) 
+            using (FileStream stream = File.Open(path, FileMode.Create))
             {
-                byte[] bytes = Encoding.UTF8.GetBytes("This is a text message."); //serializes and encodes data
-                stream.Write(bytes, 0, bytes.Length);
+                Transform playerTransform = GetPlayerTransform();
+                byte[] buffer = SerializeVector(playerTransform.position);
+                stream.Write(buffer, 0, buffer.Length);
             }
         }
 
-        public void Load(string saveFile) 
+        public void Load(string saveFile) //de-serializes and decodes data (reads it)
         {
             string path = GetPathFromSaveFile(saveFile);
             Debug.Log("Loading from " + path);
-            using(FileStream stream = File.Open(path, FileMode.Open)) 
+            using (FileStream stream = File.Open(path, FileMode.Open))
             {
-                byte[] byteBuffer = new byte[stream.Length];
-                stream.Read(byteBuffer, 0, byteBuffer.Length); //de-serializes and decodes data (reads it)
-                Debug.Log(Encoding.UTF8.GetString(byteBuffer));
+                byte[] buffer = new byte[stream.Length];
+                stream.Read(buffer, 0, buffer.Length);
+
+                Transform playerTransform = GetPlayerTransform();
+                playerTransform.position = DeserializeVector(buffer);
             }
+        }
+
+        private byte[] SerializeVector(Vector3 vector)
+        {
+            byte[] vectorBytes = new byte[3 * 4];
+            BitConverter.GetBytes(vector.x).CopyTo(vectorBytes, 0);
+            BitConverter.GetBytes(vector.y).CopyTo(vectorBytes, 4);
+            BitConverter.GetBytes(vector.z).CopyTo(vectorBytes, 8);
+            return vectorBytes;
+        }
+        
+        private Vector3 DeserializeVector(byte[] buffer) 
+        {
+            Vector3 result = new Vector3();
+            result.x = BitConverter.ToSingle(buffer, 0);
+            result.y = BitConverter.ToSingle(buffer, 4);
+            result.z = BitConverter.ToSingle(buffer, 8);
+            return result;
         }
 
         private string GetPathFromSaveFile(string saveFile) 
@@ -36,5 +58,12 @@ namespace ProjectRevolt.Saving
             
             return Path.Combine(Application.persistentDataPath, saveFile + ".sav");
         }
+
+        private Transform GetPlayerTransform()
+        {
+            return GameObject.FindWithTag("Player").transform;
+        }
+
+
     }
 }
