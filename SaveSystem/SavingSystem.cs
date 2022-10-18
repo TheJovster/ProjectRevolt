@@ -53,6 +53,7 @@ namespace ProjectRevolt.Saving
                 state[saveable.GetUniqueIdentifier()] = saveable.CaptureState();
             }
         }
+
         private void RestoreState(Dictionary<string, object> state)
         {
             Dictionary<string, object> stateDictionary = (Dictionary<string, object>)state;
