@@ -4,16 +4,8 @@ using UnityEngine;
 
 namespace ProjectRevolt.Saving 
 {
-    public class Saveable : MonoBehaviour
+    public class SaveableEntity : MonoBehaviour
     {
-        void Start()
-        {
-
-        }
-
-        void Update()
-        {
-
-        }
+        
     }
 }
