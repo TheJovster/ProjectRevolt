@@ -1,8 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using ProjectRevolt.Saving;
 
 namespace ProjectRevolt.SceneManagement 
 {
@@ -23,6 +23,8 @@ namespace ProjectRevolt.SceneManagement
         [SerializeField] private float fadeInTime = 2f;
         [SerializeField] private float fadeWaitTime = .5f;
         public Transform spawnPoint;
+
+
 
         private void OnTriggerEnter(Collider other)
         {
@@ -51,9 +53,16 @@ namespace ProjectRevolt.SceneManagement
             DontDestroyOnLoad(gameObject);
 
             Fader fader = FindObjectOfType<Fader>();
+            SavingWrapper savingWrapper = FindObjectOfType<SavingWrapper>();
 
             yield return fader.FadeOut(fadeOutTime);
+
+            savingWrapper.Save();
+
             yield return SceneManager.LoadSceneAsync(sceneToLoad);
+
+            savingWrapper.Load();
+
             Portal otherPortal = GetOtherPortal();
             UpdatePlayer(otherPortal);
 
@@ -80,8 +89,10 @@ namespace ProjectRevolt.SceneManagement
         private void UpdatePlayer(Portal otherPortal) 
         {
             GameObject player = GameObject.FindWithTag("Player");
+            player.GetComponent<NavMeshAgent>().enabled = false;
             player.GetComponent<NavMeshAgent>().Warp(otherPortal.spawnPoint.position);
             player.transform.rotation = otherPortal.spawnPoint.rotation;
+            player.GetComponent<NavMeshAgent>().enabled = true;
         }
     }
 }
