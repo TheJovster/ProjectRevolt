@@ -11,7 +11,6 @@ namespace ProjectRevolt.Saving
         public void Save(string saveFile) //serializes and encodes data
         {
             string path = GetPathFromSaveFile(saveFile);
-            Debug.Log("Saving to " + path);
             using (FileStream stream = File.Open(path, FileMode.Create))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
@@ -24,7 +23,6 @@ namespace ProjectRevolt.Saving
         public void Load(string saveFile) //de-serializes and decodes data (reads it)
         {
             string path = GetPathFromSaveFile(saveFile);
-            Debug.Log("Loading from " + path);
             using (FileStream stream = File.Open(path, FileMode.Open))
             {
                 BinaryFormatter formatter = new BinaryFormatter();

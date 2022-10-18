@@ -1,7 +1,9 @@
+using ProjectRevolt.Core;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace ProjectRevolt.Saving 
 {
@@ -18,13 +20,16 @@ namespace ProjectRevolt.Saving
 
         public object CaptureState() 
         {
-            Debug.Log("Capturing state");
-            return null;
+            return new SerializableVector3(transform.position);
         }
 
         public void RestoreState(object state) 
         {
-            Debug.Log("Restoring state for " + GetUniqueIdentifier());
+            SerializableVector3 position = (SerializableVector3)state;
+            GetComponent<NavMeshAgent>().enabled = false;
+            transform.position = position.ToVector();
+            GetComponent<NavMeshAgent>().enabled = true;
+            GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 #if UNITY_EDITOR
         private void Update()
