@@ -2,10 +2,11 @@ using UnityEngine;
 using UnityEngine.AI;
 using ProjectRevolt.Core;
 using System.Runtime.CompilerServices;
+using ProjectRevolt.Saving;
 
 namespace ProjectRevolt.Movement 
 {
-    public class Mover : MonoBehaviour, IAction
+    public class Mover : MonoBehaviour, IAction, ISaveable
     {
         //variables
         //components
@@ -69,6 +70,20 @@ namespace ProjectRevolt.Movement
             audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
             audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
             audioSource.PlayOneShot(footsteps[clipIndex]);
+        }
+
+        public object CaptureState()
+        {
+            return new SerializableVector3(transform.position);
+        }
+
+        public void RestoreState(object state)
+        {
+            SerializableVector3 position = (SerializableVector3)state;
+            GetComponent<NavMeshAgent>().enabled = false;
+            transform.position = position.ToVector();
+            GetComponent<NavMeshAgent>().enabled = true;
+            GetComponent<ActionScheduler>().CancelCurrentAction();
         }
     }
 }

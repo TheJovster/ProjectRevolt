@@ -20,16 +20,28 @@ namespace ProjectRevolt.Saving
 
         public object CaptureState() 
         {
-            return new SerializableVector3(transform.position);
+            Dictionary<string, object> state = new Dictionary<string, object>();
+            foreach(ISaveable saveable in GetComponents<ISaveable>()) 
+            {
+                state[saveable.GetType().ToString()] = saveable.CaptureState();
+            }
+            return state;
+
         }
 
         public void RestoreState(object state) 
         {
-            SerializableVector3 position = (SerializableVector3)state;
-            GetComponent<NavMeshAgent>().enabled = false;
-            transform.position = position.ToVector();
-            GetComponent<NavMeshAgent>().enabled = true;
-            GetComponent<ActionScheduler>().CancelCurrentAction();
+            Dictionary<string, object> stateDictionary = (Dictionary<string, object>)state;
+            foreach(ISaveable saveable in GetComponents<ISaveable>()) 
+            {
+                string typeString = saveable.GetType().ToString();
+                if (stateDictionary.ContainsKey(typeString)) 
+                {
+                    saveable.RestoreState(stateDictionary[typeString]);
+                }
+            }
+
+
         }
 #if UNITY_EDITOR
         private void Update()
