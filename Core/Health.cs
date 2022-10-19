@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using ProjectRevolt.Saving;
 using UnityEngine;
 
 namespace ProjectRevolt.Core 
 {
-    public class Health : MonoBehaviour, IAction
+    public class Health : MonoBehaviour, IAction, ISaveable
     {
         [Header("Health Variables")]
-        [SerializeField] private float maxHealth = 50f;
-        private float currentHealth;
+        [SerializeField]private float maxHealth = 50f;
+        [SerializeField]private float currentHealth;
         private bool isDead = false;
 
         //animation
@@ -25,12 +23,17 @@ namespace ProjectRevolt.Core
         [Header("VFX")]
         [SerializeField] private ParticleSystem bloodFX;
 
-        // Start is called before the first frame update
-        void Start()
+        private void Awake()
         {
             currentHealth = maxHealth;
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
+        }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            
         }
 
         // Update is called once per frame
@@ -77,9 +80,34 @@ namespace ProjectRevolt.Core
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 
+        private void DieBetweenScenes() //this is called ONLY if the character is already dead.
+        {
+            currentHealth = 0f;
+            animator.SetTrigger("Die"); //might want to substitute this with a ragdoll?
+            isDead = true;
+            GetComponent<ActionScheduler>().CancelCurrentAction();
+        }
+
         public void Cancel()
         {
             
+        }
+
+        public object CaptureState()
+        {
+            return currentHealth;
+        }
+
+        public void RestoreState(object state)
+        {
+            //restore healthPoints
+            currentHealth = (float)state;
+
+            //possibly die
+            if(currentHealth <= 0) 
+            {
+                DieBetweenScenes();
+            }
         }
     }
 }
