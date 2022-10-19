@@ -12,6 +12,10 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float timeBetweenAttacks = .75f;
         private float timeSinceLastAttack = Mathf.Infinity;
 
+        //weapon
+        [SerializeField] private GameObject weaponPrefab = null;
+        [SerializeField] private Transform handTransform = null;
+
         private Health target;
         private Animator animator; //is this redundant?
         private Mover mover;
