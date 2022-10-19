@@ -32,6 +32,11 @@ namespace ProjectRevolt.Combat
 
         private void Start()
         {
+            if(weaponPrefab != null && handTransform != null) //a simple check - will tweak this later.
+            {
+                Instantiate(weaponPrefab, handTransform.position, handTransform.rotation, handTransform);
+            }
+
             actionScheduler = GetComponent<ActionScheduler>();
             mover = GetComponent<Mover>();
             animator = GetComponent<Animator>();
