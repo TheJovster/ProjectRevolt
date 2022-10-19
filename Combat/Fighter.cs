@@ -12,9 +12,16 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float timeBetweenAttacks = .75f;
         private float timeSinceLastAttack = Mathf.Infinity;
 
+        //animation overrides
+        [Header("Animator Override Controllers")]
+        [SerializeField] private AnimatorOverrideController bowController;
+        [SerializeField] private AnimatorOverrideController twoHandedController;
+        //[SerializeField] private AnimatorOverrideController twoHandedLongController;
         //weapon
+        [Header("Weapon Prefabs & Transforms")]
         [SerializeField] private GameObject weaponPrefab = null;
-        [SerializeField] private Transform handTransform = null;
+        [SerializeField] private Transform rightHandTransform = null;
+        [SerializeField] private Transform leftHandTransform = null;
 
         private Health target;
         private Animator animator; //is this redundant?
@@ -32,16 +39,16 @@ namespace ProjectRevolt.Combat
 
         private void Start()
         {
-            if(weaponPrefab != null && handTransform != null) //a simple check - will tweak this later.
-            {
-                Instantiate(weaponPrefab, handTransform.position, handTransform.rotation, handTransform);
-            }
+            
 
             actionScheduler = GetComponent<ActionScheduler>();
             mover = GetComponent<Mover>();
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
+            SpawnWeapon();
         }
+
+
 
         private void Update()
         {
@@ -85,6 +92,15 @@ namespace ProjectRevolt.Combat
                 timeSinceLastAttack = 0f;
             }
             //more stuff to add
+        }
+
+        private void SpawnWeapon()
+        {
+            if (weaponPrefab != null && rightHandTransform != null) //a simple check - will tweak this later.
+            {
+                Instantiate(weaponPrefab, rightHandTransform.position, rightHandTransform.rotation, rightHandTransform);
+            }
+            animator.runtimeAnimatorController = twoHandedController;
         }
 
         private bool GetIsInRange()
