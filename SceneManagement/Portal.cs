@@ -66,6 +66,8 @@ namespace ProjectRevolt.SceneManagement
             Portal otherPortal = GetOtherPortal();
             UpdatePlayer(otherPortal);
 
+            savingWrapper.Save();
+
             yield return new WaitForSeconds(fadeWaitTime);
             yield return fader.FadeIn(fadeOutTime);
             Destroy(gameObject);

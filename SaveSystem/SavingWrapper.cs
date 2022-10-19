@@ -10,10 +10,14 @@ namespace ProjectRevolt.Saving
 
         const string defaultSaveFile = "save";
 
-        void Start()
+        private void Awake()
         {
             savingSystem = GetComponent<SavingSystem>();
-            Load();
+        }
+
+        private IEnumerator Start()
+        {
+            yield return savingSystem.LoadLastScene(defaultSaveFile);
         }
 
         void Update()

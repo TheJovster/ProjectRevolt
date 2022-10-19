@@ -1,13 +1,33 @@
 using UnityEngine;
 using System.IO;
-using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections.Generic;
+using System.Resources;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 namespace ProjectRevolt.Saving 
 {
     public class SavingSystem : MonoBehaviour
     {
+
+        public IEnumerator LoadLastScene(string saveFile) 
+        {
+            //get the state
+            Dictionary<string, object> state = LoadFile(saveFile);
+            //load last scene
+            if (state.ContainsKey("lastSceneBuildIndex"))
+            {
+                int buildIndex = (int)state["lastSceneBuildIndex"];
+                if (buildIndex != SceneManager.GetActiveScene().buildIndex)
+                {
+                    yield return SceneManager.LoadSceneAsync(buildIndex);
+                }
+            }
+            //restore state
+            RestoreState(state);
+        }
+
         public void Save(string saveFile) //serializes and encodes data
         {
             Dictionary<string, object> state = LoadFile(saveFile);
@@ -52,6 +72,7 @@ namespace ProjectRevolt.Saving
             {
                 state[saveable.GetUniqueIdentifier()] = saveable.CaptureState();
             }
+            state["lastSceneBuildIndex"] = SceneManager.GetActiveScene().buildIndex;
         }
 
         private void RestoreState(Dictionary<string, object> state)
