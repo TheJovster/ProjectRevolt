@@ -3,16 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponPickup : MonoBehaviour
+namespace ProjectRevolt.Combat 
 {
-    [SerializeField] private Weapon weapon;
-
-    private void OnTriggerEnter(Collider other)
+    public class WeaponPickup : MonoBehaviour
     {
-        if(other.tag == "Player") 
+        [SerializeField] private Weapon weapon;
+
+        private void OnTriggerEnter(Collider other)
         {
-            other.GetComponent<Fighter>().EquipWeapon(weapon);
-            Destroy(this.gameObject);
+            if (other.tag == "Player")
+            {
+                other.GetComponent<Fighter>().EquipWeapon(weapon);
+                Destroy(this.gameObject);
+            }
         }
     }
 }
+
