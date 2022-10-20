@@ -3,25 +3,15 @@ using UnityEngine;
 
 namespace ProjectRevolt.Combat
 {
-    [RequireComponent(typeof(AudioSource))]
     public class Projectile : MonoBehaviour
     {
         [Header("Projectile Data")]
         [SerializeField] private float moveSpeed;
-        [SerializeField] private AudioSource audioSource;
 
         [Header("Audio Clips")]
         [SerializeField] private AudioClip[] audioClips;
         
         private Health target;
-
-        private void Start()
-        {
-            if(audioSource == null) 
-            {
-                audioSource = GetComponent<AudioSource>();
-            }
-        }
 
         void Update()
         {
@@ -49,7 +39,7 @@ namespace ProjectRevolt.Combat
             if(other.gameObject.tag == "Enemy") 
             {
                 int impactSFXIndex = Random.Range(0, audioClips.Length);
-                audioSource.PlayOneShot(audioClips[impactSFXIndex]);
+                other.gameObject.GetComponent<AudioSource>().PlayOneShot(audioClips[impactSFXIndex]);
                 Debug.Log(other.transform.name + " hit!");
                 //target.TakeDamage()
                 //deal damage
