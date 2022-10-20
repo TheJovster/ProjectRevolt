@@ -141,6 +141,14 @@ namespace ProjectRevolt.Combat
             currentWeapon.GetVolumeLevel();
             audioSource.PlayOneShot(currentWeapon.SwingFXToPlay());
         }
+
+        private void Shoot() 
+        {
+            //sets target
+            //is homing projectile?
+            //instantiates projectile - set target
+            //object pooling?
+        }
     }
 }
 
