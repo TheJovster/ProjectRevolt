@@ -11,9 +11,15 @@ namespace ProjectRevolt.Combat
 
         void Update()
         {
-            Transform target = GameObject.FindGameObjectWithTag("Player").transform;
-            transform.LookAt(target.position + (Vector3.up * 1.25f));
+            
+            transform.LookAt(GetAimLocation());
             transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+        }
+
+        private Vector3 GetAimLocation() 
+        {
+            Transform target = GameObject.FindGameObjectWithTag("Player").transform;
+            return target.position + (Vector3.up * 1.25f);
         }
     }
 }
