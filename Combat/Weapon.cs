@@ -18,6 +18,8 @@ namespace ProjectRevolt.Combat
         [Header("Animator Override Controller")]
         [SerializeField] private AnimatorOverrideController weaponOverrideController;
 
+        //sound
+
         public void Spawn(Transform handTransform, Animator animator) 
         {
             if(weaponPrefab != null) 
