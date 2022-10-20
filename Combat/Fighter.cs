@@ -12,14 +12,12 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float timeBetweenAttacks = .75f;
         private float timeSinceLastAttack = Mathf.Infinity;
 
-        //animation overrides
-        [Header("Animator Override Controllers")]
-        [SerializeField] private AnimatorOverrideController bowController;
-        [SerializeField] private AnimatorOverrideController twoHandedController;
-        //[SerializeField] private AnimatorOverrideController twoHandedLongController;
+
         //weapon
-        [Header("Weapon Prefabs & Transforms")]
-        [SerializeField] private GameObject weaponPrefab = null;
+        [Header("Weapon Scriptable Object")]
+        [SerializeField] private Weapon weapon = null;
+
+        [Header("Hand Transforms")]
         [SerializeField] private Transform rightHandTransform = null;
         [SerializeField] private Transform leftHandTransform = null;
 
@@ -96,11 +94,10 @@ namespace ProjectRevolt.Combat
 
         private void SpawnWeapon()
         {
-            if (weaponPrefab != null && rightHandTransform != null) //a simple check - will tweak this later.
-            {
-                Instantiate(weaponPrefab, rightHandTransform.position, rightHandTransform.rotation, rightHandTransform);
-            }
-            animator.runtimeAnimatorController = twoHandedController;
+            if (weapon == null) return;
+            weapon.Spawn(rightHandTransform, animator);
+
+            
         }
 
         private bool GetIsInRange()
