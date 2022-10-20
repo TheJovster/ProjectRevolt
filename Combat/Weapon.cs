@@ -1,3 +1,4 @@
+using ProjectRevolt.Core;
 using UnityEngine;
 
 namespace ProjectRevolt.Combat 
@@ -6,11 +7,13 @@ namespace ProjectRevolt.Combat
     public class Weapon : ScriptableObject
     {
         //variables
-        [Header("Weapon Variables")]
+        [Header("Weapon Variables and Components")]
         [SerializeField] private float weaponRange = 2f;
         [SerializeField] private float weaponDamage = 20f;
+        [SerializeField] private Projectile projectile = null;
         //weapon speed?
         //which hand should be used
+        [Header("Conditionals")]
         [SerializeField] private bool isLeftHanded = false;
 
         //visual for the object
@@ -31,16 +34,38 @@ namespace ProjectRevolt.Combat
         //weapon icon for the ui?
         //weapon value for the store?
 
-        public void Spawn(Transform handTransform, Animator animator) 
+        public void Spawn(Transform rightHandTransform, Transform leftHandTransform, Animator animator) 
         {
-            if(weaponPrefab != null) 
+            if(weaponPrefab != null)
             {
+                Transform handTransform = GetTransform(rightHandTransform, leftHandTransform);
                 Instantiate(weaponPrefab, handTransform);
             }
-            if(weaponOverrideController != null) 
+            if (weaponOverrideController != null) 
             {
                 animator.runtimeAnimatorController = weaponOverrideController;
             }
+        }
+
+        private Transform GetTransform(Transform rightHandTransform, Transform leftHandTransform)
+        {
+            Transform handTransform;
+            if (isLeftHanded)
+            {
+                handTransform = leftHandTransform;
+            }
+            else
+            {
+                handTransform = rightHandTransform;
+            }
+
+            return handTransform;
+        }
+
+        public void LaunchProjectile(Transform rightHand, Transform leftHand, Health target) 
+        {
+            Projectile projectileInstance = Instantiate(projectile, GetTransform(rightHand, leftHand).position, Quaternion.identity);
+            projectileInstance.SetTarget(target);
         }
         //getters
         public float GetWeaponDamage() 
@@ -80,6 +105,11 @@ namespace ProjectRevolt.Combat
         public bool IsLeftHanded() 
         {
             return isLeftHanded;
+        }
+
+        public bool HasProjectile() 
+        {
+            return projectile != null;
         }
     }
 }

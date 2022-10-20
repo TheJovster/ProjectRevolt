@@ -29,8 +29,6 @@ namespace ProjectRevolt.Combat
 
         private void Start()
         {
-            
-
             actionScheduler = GetComponent<ActionScheduler>();
             mover = GetComponent<Mover>();
             animator = GetComponent<Animator>();
@@ -87,11 +85,11 @@ namespace ProjectRevolt.Combat
             currentWeapon = weapon;
             if (weapon.IsLeftHanded()) 
             {
-                weapon.Spawn(leftHandTransform, animator);
+                weapon.Spawn(rightHandTransform, leftHandTransform, animator);
             }
             else if (!weapon.IsLeftHanded()) 
             {
-                weapon.Spawn(rightHandTransform, animator);
+                weapon.Spawn(rightHandTransform, leftHandTransform, animator);
             }
         }
 
@@ -124,11 +122,20 @@ namespace ProjectRevolt.Combat
         private void Hit()
         {
             if (target == null) return;
-            Debug.Log("You hit the enemy with your club. That's gotta hurt!");
-            target.TakeDamage(currentWeapon.GetWeaponDamage());
-            currentWeapon.GetPitchLevel();
-            currentWeapon.GetVolumeLevel();
-            audioSource.PlayOneShot(currentWeapon.HitFXToPlay());
+            if (currentWeapon.HasProjectile()) 
+            {
+                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, target);
+                audioSource.PlayOneShot(currentWeapon.HitFXToPlay());
+                //instantiates projectile - set target
+                //object pooling?
+            }
+            else 
+            {
+                target.TakeDamage(currentWeapon.GetWeaponDamage());
+                currentWeapon.GetPitchLevel();
+                currentWeapon.GetVolumeLevel();
+                audioSource.PlayOneShot(currentWeapon.HitFXToPlay());
+            }
             if (target.GetComponent<Health>().IsDead())
             {
                 Cancel();
@@ -144,10 +151,7 @@ namespace ProjectRevolt.Combat
 
         private void Shoot() 
         {
-            //sets target
-            //is homing projectile?
-            //instantiates projectile - set target
-            //object pooling?
+            Hit();
         }
     }
 }
