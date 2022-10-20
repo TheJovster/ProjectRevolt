@@ -12,7 +12,8 @@ namespace ProjectRevolt.Combat
 
         //weapon
         [Header("Weapon Scriptable Object")]
-        [SerializeField] private Weapon weapon = null;
+        [SerializeField] private Weapon defaultWeapon;
+        private Weapon currentWeapon = null;
 
         [Header("Hand Transforms")]
         [SerializeField] private Transform rightHandTransform = null;
@@ -34,7 +35,7 @@ namespace ProjectRevolt.Combat
             mover = GetComponent<Mover>();
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
-            SpawnWeapon();
+            EquipWeapon(defaultWeapon);
         }
 
         private void Update()
@@ -81,17 +82,15 @@ namespace ProjectRevolt.Combat
             //more stuff to add
         }
 
-        private void SpawnWeapon()
+        public void EquipWeapon(Weapon weapon)
         {
-            if (weapon == null) return;
+            currentWeapon = weapon;
             weapon.Spawn(rightHandTransform, animator);
-
-            
         }
 
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, target.transform.position) < weapon.GetWeaponRange();
+            return Vector3.Distance(transform.position, target.transform.position) < currentWeapon.GetWeaponRange();
         }
 
         public void Cancel()
@@ -119,10 +118,10 @@ namespace ProjectRevolt.Combat
         {
             if (target == null) return;
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
-            target.TakeDamage(weapon.GetWeaponDamage());
-            weapon.GetPitchLevel();
-            weapon.GetVolumeLevel();
-            audioSource.PlayOneShot(weapon.HitFXToPlay());
+            target.TakeDamage(currentWeapon.GetWeaponDamage());
+            currentWeapon.GetPitchLevel();
+            currentWeapon.GetVolumeLevel();
+            audioSource.PlayOneShot(currentWeapon.HitFXToPlay());
             if (target.GetComponent<Health>().IsDead())
             {
                 Cancel();
@@ -131,9 +130,9 @@ namespace ProjectRevolt.Combat
 
         private void Swing() 
         {
-            weapon.GetPitchLevel();
-            weapon.GetVolumeLevel();
-            audioSource.PlayOneShot(weapon.SwingFXToPlay());
+            currentWeapon.GetPitchLevel();
+            currentWeapon.GetVolumeLevel();
+            audioSource.PlayOneShot(currentWeapon.SwingFXToPlay());
         }
     }
 }

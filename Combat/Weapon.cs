@@ -9,6 +9,7 @@ namespace ProjectRevolt.Combat
         [Header("Weapon Variables")]
         [SerializeField] private float weaponRange = 2f;
         [SerializeField] private float weaponDamage = 20f;
+        //weapon speed?
 
         //visual for the object
         [Header("Weapon Visual")]
@@ -34,7 +35,10 @@ namespace ProjectRevolt.Combat
             {
                 Instantiate(weaponPrefab, handTransform);
             }
-            animator.runtimeAnimatorController = weaponOverrideController;
+            if(weaponOverrideController != null) 
+            {
+                animator.runtimeAnimatorController = weaponOverrideController;
+            }
         }
         //getters
         public float GetWeaponDamage() 
