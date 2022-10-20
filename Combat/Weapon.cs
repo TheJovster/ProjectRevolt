@@ -10,6 +10,8 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float weaponRange = 2f;
         [SerializeField] private float weaponDamage = 20f;
         //weapon speed?
+        //which hand should be used
+        [SerializeField] private bool isLeftHanded = false;
 
         //visual for the object
         [Header("Weapon Visual")]
@@ -75,5 +77,9 @@ namespace ProjectRevolt.Combat
             return Random.Range(1 - volumeChangeMultiplier, 1);
         }
 
+        public bool IsLeftHanded() 
+        {
+            return isLeftHanded;
+        }
     }
 }

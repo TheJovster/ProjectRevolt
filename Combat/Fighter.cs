@@ -85,7 +85,14 @@ namespace ProjectRevolt.Combat
         public void EquipWeapon(Weapon weapon)
         {
             currentWeapon = weapon;
-            weapon.Spawn(rightHandTransform, animator);
+            if (weapon.IsLeftHanded()) 
+            {
+                weapon.Spawn(leftHandTransform, animator);
+            }
+            else if (!weapon.IsLeftHanded()) 
+            {
+                weapon.Spawn(rightHandTransform, animator);
+            }
         }
 
         private bool GetIsInRange()
