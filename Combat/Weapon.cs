@@ -7,8 +7,8 @@ namespace ProjectRevolt.Combat
     {
         //variables
         [Header("Weapon Variables")]
-        [SerializeField] private float weaponDamage;
-        [SerializeField] private float weaponRange;
+        [SerializeField] private float weaponRange = 2f;
+        [SerializeField] private float weaponDamage = 20f;
 
         //visual for the object
         [Header("Weapon Visual")]
@@ -19,6 +19,14 @@ namespace ProjectRevolt.Combat
         [SerializeField] private AnimatorOverrideController weaponOverrideController;
 
         //sound
+        [Header("Audio and Sound")]
+        [SerializeField] private AudioClip[] swingEffects;
+        [SerializeField] private AudioClip[] hitEffects;
+        [Range(.1f, .5f)][SerializeField] private float volumeChangeMultiplier = .2f;
+        [Range(.1f, .5f)][SerializeField] private float pitchChangeMultiplier = .2f;
+
+        //weapon icon for the ui?
+        //weapon value for the store?
 
         public void Spawn(Transform handTransform, Animator animator) 
         {
@@ -27,6 +35,40 @@ namespace ProjectRevolt.Combat
                 Instantiate(weaponPrefab, handTransform);
             }
             animator.runtimeAnimatorController = weaponOverrideController;
+        }
+        //getters
+        public float GetWeaponDamage() 
+        {
+            return weaponDamage;
+        }
+
+        public float GetWeaponRange() 
+        {
+            return weaponRange;
+        }
+        //sound calculations
+
+        public AudioClip HitFXToPlay() 
+        {
+            int hitSFXIndex = Random.Range(0, swingEffects.Length);
+            return hitEffects[hitSFXIndex];
+            
+        }
+
+        public AudioClip SwingFXToPlay() 
+        {
+            int swingSFXIndex = Random.Range(0, swingEffects.Length);
+            return swingEffects[swingSFXIndex];
+        }
+
+        public float GetPitchLevel() 
+        {
+            return Random.Range(1 - pitchChangeMultiplier, 1);
+        }
+
+        public float GetVolumeLevel() 
+        {
+            return Random.Range(1 - volumeChangeMultiplier, 1);
         }
 
     }

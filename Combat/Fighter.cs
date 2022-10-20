@@ -7,11 +7,8 @@ namespace ProjectRevolt.Combat
 {
     public class Fighter : MonoBehaviour, IAction
     {
-        [SerializeField] private float weaponRange = 2f;
-        [SerializeField] private float weaponDamage = 20f;
         [SerializeField] private float timeBetweenAttacks = .75f;
         private float timeSinceLastAttack = Mathf.Infinity;
-
 
         //weapon
         [Header("Weapon Scriptable Object")]
@@ -28,12 +25,6 @@ namespace ProjectRevolt.Combat
 
         //sound manager
         private AudioSource audioSource;
-        [Header("Audio and Sound")]
-        [SerializeField]private AudioClip[] swingEffects;
-        [SerializeField]private AudioClip[] hitEffects;
-        [Range(.1f, .5f)][SerializeField] private float volumeChangeMultiplier = .2f;
-        [Range(.1f, .5f)][SerializeField] private float pitchChangeMultiplier = .2f;
-
 
         private void Start()
         {
@@ -45,8 +36,6 @@ namespace ProjectRevolt.Combat
             audioSource = GetComponent<AudioSource>();
             SpawnWeapon();
         }
-
-
 
         private void Update()
         {
@@ -102,10 +91,8 @@ namespace ProjectRevolt.Combat
 
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
+            return Vector3.Distance(transform.position, target.transform.position) < weapon.GetWeaponRange();
         }
-
-
 
         public void Cancel()
         {
@@ -132,11 +119,10 @@ namespace ProjectRevolt.Combat
         {
             if (target == null) return;
             Debug.Log("You hit the enemy with your club. That's gotta hurt!");
-            target.TakeDamage(weaponDamage);
-            int hitSFXIndex = Random.Range(0, swingEffects.Length);
-            audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
-            audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
-            audioSource.PlayOneShot(hitEffects[hitSFXIndex]);
+            target.TakeDamage(weapon.GetWeaponDamage());
+            weapon.GetPitchLevel();
+            weapon.GetVolumeLevel();
+            audioSource.PlayOneShot(weapon.HitFXToPlay());
             if (target.GetComponent<Health>().IsDead())
             {
                 Cancel();
@@ -145,10 +131,9 @@ namespace ProjectRevolt.Combat
 
         private void Swing() 
         {
-            int swingSFXIndex = Random.Range(0, swingEffects.Length);
-            audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
-            audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
-            audioSource.PlayOneShot(swingEffects[swingSFXIndex]);
+            weapon.GetPitchLevel();
+            weapon.GetVolumeLevel();
+            audioSource.PlayOneShot(weapon.SwingFXToPlay());
         }
     }
 }
