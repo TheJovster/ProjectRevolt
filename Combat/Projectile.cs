@@ -38,7 +38,8 @@ namespace ProjectRevolt.Combat
 
         private void OnTriggerEnter(Collider other) //impact event
         {
-            if(other.gameObject.tag == "Enemy" && target.GetComponent<Health>() != null) 
+            if (other.GetComponent<Health>() != target) return;
+            else if(other.GetComponent<Health>() == target) 
             {
                 int impactSFXIndex = Random.Range(0, audioClips.Length);
                 other.gameObject.GetComponent<AudioSource>().PlayOneShot(audioClips[impactSFXIndex]);
