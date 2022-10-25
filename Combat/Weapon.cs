@@ -11,6 +11,8 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float weaponRange = 2f;
         [SerializeField] private float weaponDamage = 20f;
         [SerializeField] private Projectile projectile = null;
+
+        const string weaponName = "Weapon";
         //weapon speed?
         //which hand should be used
         [Header("Conditionals")]
@@ -36,15 +38,33 @@ namespace ProjectRevolt.Combat
 
         public void Spawn(Transform rightHandTransform, Transform leftHandTransform, Animator animator) 
         {
+            DestroyOldWeapon(rightHandTransform, leftHandTransform);
+
             if(weaponPrefab != null)
             {
                 Transform handTransform = GetTransform(rightHandTransform, leftHandTransform);
-                Instantiate(weaponPrefab, handTransform);
+                GameObject weapon = Instantiate(weaponPrefab, handTransform);
+                weapon.name = weaponName;
             }
             if (weaponOverrideController != null) 
             {
                 animator.runtimeAnimatorController = weaponOverrideController;
             }
+        }
+
+        private void DestroyOldWeapon(Transform rightHand, Transform leftHand)
+        {
+            Transform oldWeapon = rightHand.Find(weaponName);
+            if(oldWeapon == null) 
+            {
+                oldWeapon = leftHand.Find(weaponName);
+            }
+            if (oldWeapon == null)
+            {
+                return;
+            }
+            oldWeapon.name = "DESTROYING";
+            Destroy(oldWeapon.gameObject);
         }
 
         private Transform GetTransform(Transform rightHandTransform, Transform leftHandTransform)
