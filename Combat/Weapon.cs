@@ -46,9 +46,14 @@ namespace ProjectRevolt.Combat
                 GameObject weapon = Instantiate(weaponPrefab, handTransform);
                 weapon.name = weaponName;
             }
+            var overrideController = animator.runtimeAnimatorController as AnimatorOverrideController;
             if (weaponOverrideController != null) 
             {
                 animator.runtimeAnimatorController = weaponOverrideController;
+            }
+            else if(overrideController != null)
+            {
+                animator.runtimeAnimatorController = overrideController.runtimeAnimatorController;
             }
         }
 
