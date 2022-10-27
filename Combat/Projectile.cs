@@ -10,6 +10,7 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float moveSpeed;
         [SerializeField] private float damage = 0f;
         [SerializeField] private bool isHoming = false;
+        [SerializeField] private ParticleSystem impactFX;
 
         [Header("Audio Clips")]
         [SerializeField] private AudioClip[] audioClips;
@@ -56,6 +57,8 @@ namespace ProjectRevolt.Combat
             other.gameObject.GetComponent<AudioSource>().PlayOneShot(audioClips[impactSFXIndex]);
             Debug.Log(other.transform.name + " hit!");
             target.TakeDamage(damage);//deal damage
+            ParticleSystem impactFXInstance = Instantiate(impactFX, other.transform.position + Vector3.up, Quaternion.identity);
+            Destroy(impactFXInstance.gameObject, impactFX.main.duration);
             Destroy(this.gameObject);//destroy self
         }
 
