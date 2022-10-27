@@ -11,6 +11,9 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float damage = 0f;
         [SerializeField] private bool isHoming = false;
         [SerializeField] private ParticleSystem impactFX;
+        [SerializeField] private float maxLifeTime = 10f;
+        //[SerializeField] private GameObject[] destroyOnImpact = null;
+        //[SerializeField] private float lifeAfterImpact = 2f;
 
         [Header("Audio Clips")]
         [SerializeField] private AudioClip[] audioClips;
@@ -37,6 +40,8 @@ namespace ProjectRevolt.Combat
         {
             this.target = target;
             this.damage = damage;
+
+            Destroy(this.gameObject, maxLifeTime);
         }
 
         private Vector3 GetAimLocation() 
@@ -51,8 +56,16 @@ namespace ProjectRevolt.Combat
 
         private void OnTriggerEnter(Collider other) //impact event
         {
+            if(other.GetComponent<Health>() == null) //impact event for non-enemy objects
+            {
+                ParticleSystem impactFXInstanceGeneric = Instantiate(impactFX, transform.position, Quaternion.identity);
+                Destroy(impactFXInstanceGeneric.gameObject, impactFX.main.duration);
+                Destroy(this.gameObject);//destroy self
+            }
             if(other.GetComponent<Health>() != target) return;
             if(target.IsDead()) return;
+
+            //impact event for enemy objects
             int impactSFXIndex = Random.Range(0, audioClips.Length);
             other.gameObject.GetComponent<AudioSource>().PlayOneShot(audioClips[impactSFXIndex]);
             Debug.Log(other.transform.name + " hit!");
