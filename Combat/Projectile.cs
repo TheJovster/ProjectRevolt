@@ -1,4 +1,5 @@
 using ProjectRevolt.Core;
+using UnityEditor;
 using UnityEngine;
 
 namespace ProjectRevolt.Combat
@@ -28,6 +29,7 @@ namespace ProjectRevolt.Combat
                 transform.LookAt(GetAimLocation());
             }
             transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+            
         }
 
         public void SetTarget(Health target, float damage) 
@@ -55,6 +57,11 @@ namespace ProjectRevolt.Combat
             Debug.Log(other.transform.name + " hit!");
             target.TakeDamage(damage);//deal damage
             Destroy(this.gameObject);//destroy self
+        }
+
+        private void OnBecameInvisible()
+        {
+            Destroy(this.gameObject,.5f);
         }
     }
 }
