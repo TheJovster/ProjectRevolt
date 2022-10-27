@@ -8,15 +8,25 @@ namespace ProjectRevolt.Combat
         [Header("Projectile Data")]
         [SerializeField] private float moveSpeed;
         [SerializeField] private float damage = 0f;
+        [SerializeField] private bool isHoming = false;
 
         [Header("Audio Clips")]
         [SerializeField] private AudioClip[] audioClips;
         
         private Health target;
 
-        void Update()
+        private void Start()
         {
             transform.LookAt(GetAimLocation());
+        }
+
+        void Update()
+        {
+            if (target == null) return;
+            if (isHoming && !target.IsDead())
+            {
+                transform.LookAt(GetAimLocation());
+            }
             transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
         }
 
@@ -38,15 +48,13 @@ namespace ProjectRevolt.Combat
 
         private void OnTriggerEnter(Collider other) //impact event
         {
-            if (other.GetComponent<Health>() != target) return;
-            else if(other.GetComponent<Health>() == target) 
-            {
-                int impactSFXIndex = Random.Range(0, audioClips.Length);
-                other.gameObject.GetComponent<AudioSource>().PlayOneShot(audioClips[impactSFXIndex]);
-                Debug.Log(other.transform.name + " hit!");
-                target.TakeDamage(damage);//deal damage
-                Destroy(this.gameObject);//destroy self
-            }
+            if(other.GetComponent<Health>() != target) return;
+            if(target.IsDead()) return;
+            int impactSFXIndex = Random.Range(0, audioClips.Length);
+            other.gameObject.GetComponent<AudioSource>().PlayOneShot(audioClips[impactSFXIndex]);
+            Debug.Log(other.transform.name + " hit!");
+            target.TakeDamage(damage);//deal damage
+            Destroy(this.gameObject);//destroy self
         }
     }
 }
