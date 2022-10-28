@@ -12,8 +12,7 @@ namespace ProjectRevolt.Combat
 
         //weapon
         [Header("Weapon Scriptable Object")]
-        [SerializeField] private Weapon defaultWeapon;
-        [SerializeField] private string defaultWeaponName = "Player_Unarmed";
+        [SerializeField] private string defaultWeaponName;
         private Weapon currentWeapon = null;
 
         [Header("Hand Transforms")]
@@ -30,11 +29,7 @@ namespace ProjectRevolt.Combat
 
         private void Start()
         {
-            if(this.gameObject.tag == "Enemy") 
-            {
-                defaultWeaponName = "Enemy_Unarmed";
-            }
-            else if(this.gameObject.tag == "Player") 
+            if(this.gameObject.tag == "Player") 
             {
                 defaultWeaponName = "Player_Unarmed";
             }

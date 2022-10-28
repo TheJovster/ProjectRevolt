@@ -56,13 +56,13 @@ namespace ProjectRevolt.Combat
 
         private void OnTriggerEnter(Collider other) //impact event
         {
-            if(other.GetComponent<Health>() == null) //impact event for non-enemy objects
+/*            if (other.GetComponent<Health>() == null) //impact event for non-enemy objects - BUG: The arrows get destroyed upon contact with the bow. Need to figure out a fix.
             {
                 ParticleSystem impactFXInstanceGeneric = Instantiate(impactFX, transform.position, Quaternion.identity);
                 Destroy(impactFXInstanceGeneric.gameObject, impactFX.main.duration);
                 Destroy(this.gameObject);//destroy self
-            }
-            if(other.GetComponent<Health>() != target) return;
+            }*/
+            if (other.GetComponent<Health>() != target) return;
             if(target.IsDead()) return;
 
             //impact event for enemy objects
