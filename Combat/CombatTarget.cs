@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using ProjectRevolt.Core;
+using ProjectRevolt.Attributes;
 
 namespace ProjectRevolt.Combat 
 {

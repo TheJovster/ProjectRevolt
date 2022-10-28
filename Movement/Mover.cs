@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 using ProjectRevolt.Core;
-using System.Runtime.CompilerServices;
 using ProjectRevolt.Saving;
+using ProjectRevolt.Attributes;
 
 namespace ProjectRevolt.Movement 
 {

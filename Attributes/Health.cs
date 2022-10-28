@@ -1,7 +1,9 @@
 using ProjectRevolt.Saving;
 using UnityEngine;
+using ProjectRevolt.Stats;
+using ProjectRevolt.Core;
 
-namespace ProjectRevolt.Core 
+namespace ProjectRevolt.Attributes 
 {
     public class Health : MonoBehaviour, IAction, ISaveable
     {
@@ -25,6 +27,7 @@ namespace ProjectRevolt.Core
 
         private void Awake()
         {
+            maxHealth = GetComponent<BaseStats>().GetHealth();
             currentHealth = maxHealth;
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();

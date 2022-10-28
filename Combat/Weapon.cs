@@ -1,4 +1,4 @@
-using ProjectRevolt.Core;
+using ProjectRevolt.Attributes;
 using UnityEngine;
 
 namespace ProjectRevolt.Combat 

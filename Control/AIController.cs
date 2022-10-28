@@ -2,6 +2,7 @@ using UnityEngine;
 using ProjectRevolt.Movement;
 using ProjectRevolt.Combat;
 using ProjectRevolt.Core;
+using ProjectRevolt.Attributes;
 using System;
 
 namespace ProjectRevolt.Control 
