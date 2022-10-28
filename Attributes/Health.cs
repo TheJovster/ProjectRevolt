@@ -27,7 +27,7 @@ namespace ProjectRevolt.Attributes
 
         private void Awake()
         {
-            maxHealth = GetComponent<BaseStats>().GetHealth();
+            maxHealth = GetComponent<BaseStats>().GetStat(Stat.Health);
             currentHealth = maxHealth;
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
@@ -50,7 +50,7 @@ namespace ProjectRevolt.Attributes
             return isDead;
         }
 
-        public void TakeDamage(float damageToTake)
+        public void TakeDamage(GameObject instigator, float damageToTake)
         {
             if (!IsDead())
             {
@@ -59,6 +59,7 @@ namespace ProjectRevolt.Attributes
                 if (currentHealth <= 0)
                 {
                     Die();
+                    AwardExperience(instigator);
                 }
                 else
                 {
@@ -74,6 +75,11 @@ namespace ProjectRevolt.Attributes
             }
         }
 
+        public float GetPercentage() 
+        {
+            return 100 * (currentHealth / maxHealth);
+        }
+
         private void Die()
         {
             currentHealth = 0f;
@@ -83,6 +89,14 @@ namespace ProjectRevolt.Attributes
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
 
+        private void AwardExperience(GameObject instigator) 
+        {
+            Experience experience = instigator.GetComponent<Experience>();
+            if (experience == null) return;
+
+            experience.GainExperience(GetComponent<BaseStats>().GetStat(Stat.ExperienceReward));
+        }
+        
         private void DieBetweenScenes() //this is called ONLY if the character is already dead.
         {
             currentHealth = 0f;

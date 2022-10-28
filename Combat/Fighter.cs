@@ -102,6 +102,11 @@ namespace ProjectRevolt.Combat
             }
         }
 
+        public Health GetTarget() 
+        {
+            return target;
+        }
+
         private bool GetIsInRange()
         {
             return Vector3.Distance(transform.position, target.transform.position) < currentWeapon.GetWeaponRange();
@@ -133,14 +138,14 @@ namespace ProjectRevolt.Combat
             if (target == null) return;
             if (currentWeapon.HasProjectile()) 
             {
-                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, target);
+                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, target, gameObject);
                 audioSource.PlayOneShot(currentWeapon.HitFXToPlay());
                 //instantiates projectile - set target
                 //object pooling?
             }
             else 
             {
-                target.TakeDamage(currentWeapon.GetWeaponDamage());
+                target.TakeDamage(gameObject, currentWeapon.GetWeaponDamage());
                 currentWeapon.GetPitchLevel();
                 currentWeapon.GetVolumeLevel();
                 audioSource.PlayOneShot(currentWeapon.HitFXToPlay());

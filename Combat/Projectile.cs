@@ -13,6 +13,7 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float maxLifeTime = 10f;
         //[SerializeField] private GameObject[] destroyOnImpact = null;
         //[SerializeField] private float lifeAfterImpact = 2f;
+        private GameObject instigator = null;
 
         [Header("Audio Clips")]
         [SerializeField] private AudioClip[] audioClips;
@@ -35,10 +36,11 @@ namespace ProjectRevolt.Combat
             
         }
 
-        public void SetTarget(Health target, float damage) 
+        public void SetTarget(Health target, GameObject instigator, float damage) 
         {
             this.target = target;
             this.damage = damage;
+            this.instigator = instigator;
 
             Destroy(this.gameObject, maxLifeTime);
         }
@@ -67,7 +69,7 @@ namespace ProjectRevolt.Combat
             //impact event for enemy objects
             int impactSFXIndex = Random.Range(0, audioClips.Length);
             other.gameObject.GetComponent<AudioSource>().PlayOneShot(audioClips[impactSFXIndex]);
-            target.TakeDamage(damage);//deal damage
+            target.TakeDamage(instigator, damage);//deal damage
             ParticleSystem impactFXInstance = Instantiate(impactFX, other.transform.position + Vector3.up, Quaternion.identity);
             Destroy(impactFXInstance.gameObject, impactFX.main.duration);
             Destroy(this.gameObject);//destroy self

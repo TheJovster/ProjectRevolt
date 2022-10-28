@@ -6,12 +6,38 @@ namespace ProjectRevolt.Stats
     public class Progression : ScriptableObject
     {
         [SerializeField] ProgressionCharacterClass[] characterClasses = null;
+
+        public float GetStat(Stat stat, CharacterClass characterClass, int level) 
+        {
+            foreach (ProgressionCharacterClass progressionClass in characterClasses) 
+            {
+                if (progressionClass.characterClass != characterClass) continue;
+                
+                foreach(ProgressionStat progressionStat in progressionClass.stats)
+                {
+                    if (progressionStat.stat != stat) continue;
+                    if (progressionStat.levels.Length < level) continue; 
+                    return progressionStat.levels[level - 1];
+                }
+
+            }
+            return 0;
+        }
+
         [System.Serializable]
         class ProgressionCharacterClass
         {
-            [SerializeField] CharacterClass characterClass;
-            [SerializeField][Tooltip("The array element each correspond to one player level. Element 0 corresponds to Level 1, Element 1 corresponds to Level 2, etc.")] float[] health;
+            public CharacterClass characterClass;
+            public ProgressionStat[] stats;
+
             
+        }
+
+        [System.Serializable]
+        class ProgressionStat 
+        {
+            public Stat stat;
+            public float[] levels;
         }
     }
 }

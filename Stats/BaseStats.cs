@@ -11,9 +11,9 @@ namespace ProjectRevolt.Stats
         [SerializeField] private Progression progression = null;
         
 
-        public float GetHealth() 
+        public float GetStat(Stat stat) 
         {
-            return 5f;
+            return progression.GetStat(stat, characterClass, level);
         }
     }
 }

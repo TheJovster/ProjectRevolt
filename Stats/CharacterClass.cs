@@ -1,6 +1,6 @@
 namespace ProjectRevolt.Stats 
 {
-    enum CharacterClass 
+    public enum CharacterClass 
     {
         BelligerentPeasant,
         Grunt,
