@@ -2,17 +2,18 @@ using UnityEngine;
 using ProjectRevolt.Core;
 using ProjectRevolt.Movement;
 using System.Runtime.InteropServices.WindowsRuntime;
+using ProjectRevolt.Saving;
 
 namespace ProjectRevolt.Combat 
 {
-    public class Fighter : MonoBehaviour, IAction
+    public class Fighter : MonoBehaviour, IAction, ISaveable
     {
         [SerializeField] private float timeBetweenAttacks = .75f;
         private float timeSinceLastAttack = Mathf.Infinity;
 
         //weapon
         [Header("Weapon Scriptable Object")]
-        [SerializeField] private string defaultWeaponName;
+        [SerializeField] private Weapon defaultWeapon = null;
         private Weapon currentWeapon = null;
 
         [Header("Hand Transforms")]
@@ -27,18 +28,21 @@ namespace ProjectRevolt.Combat
         //sound manager
         private AudioSource audioSource;
 
-        private void Start()
+        private void Awake()
         {
-            if(this.gameObject.tag == "Player") 
-            {
-                defaultWeaponName = "Player_Unarmed";
-            }
             actionScheduler = GetComponent<ActionScheduler>();
             mover = GetComponent<Mover>();
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
-            Weapon weapon = Resources.Load<Weapon>(defaultWeaponName);
-            EquipWeapon(weapon);
+        }
+
+        private void Start()
+        {
+
+            if(currentWeapon == null) 
+            {
+                EquipWeapon(defaultWeapon);
+            }
         }
 
         private void Update()
@@ -157,6 +161,18 @@ namespace ProjectRevolt.Combat
         private void Shoot() 
         {
             Hit();
+        }
+        //ISaveable interface implementation - basic iteration
+        public object CaptureState()
+        {
+            return currentWeapon.name;
+        }
+
+        public void RestoreState(object state)
+        {
+            string weaponName = (string)state;
+            Weapon weapon = Resources.Load<Weapon>(weaponName);
+            EquipWeapon(weapon);
         }
     }
 }
