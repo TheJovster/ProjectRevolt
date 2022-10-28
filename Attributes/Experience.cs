@@ -14,6 +14,11 @@ namespace ProjectRevolt.Attributes
             experiencePoints += experience;
         }
 
+        public float GetExperiencePoints() 
+        {
+            return experiencePoints;
+        }
+
         //ISaveable interface implementation
         public object CaptureState()
         {
