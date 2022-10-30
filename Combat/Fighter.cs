@@ -40,7 +40,6 @@ namespace ProjectRevolt.Combat
 
         private void Start()
         {
-
             if(currentWeapon == null) 
             {
                 EquipWeapon(defaultWeapon);

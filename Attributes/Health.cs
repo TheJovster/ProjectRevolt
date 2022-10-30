@@ -28,21 +28,15 @@ namespace ProjectRevolt.Attributes
         [Header("VFX")]
         [SerializeField] private ParticleSystem bloodFX;
 
-        private void Awake()
+        private void Start()
         {
             maxHealth = GetComponent<BaseStats>().GetStat(Stat.Health);
             currentHealth = maxHealth;
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
-        }
-
-        // Start is called before the first frame update
-        void Start()
-        {
             GetComponent<BaseStats>().onLevelUp += UpdateHealth;
         }
 
-        // Update is called once per frame
         void Update()
         {
             

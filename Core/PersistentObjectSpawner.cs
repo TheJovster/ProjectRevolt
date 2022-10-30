@@ -10,7 +10,7 @@ namespace ProjectRevolt.Core
         static bool hasSpawned = false;
 
 
-        private void Awake()
+        private void Start()
         {
             if(hasSpawned) 
             {
