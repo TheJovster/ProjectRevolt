@@ -65,6 +65,7 @@ namespace ProjectRevolt.Attributes
             {
                 bloodFX.Play();
                 currentHealth -= damageToTake;
+                Debug.Log(gameObject.name + " has taken " + damageToTake + " damage");
                 if (currentHealth <= 0)
                 {
                     Die();

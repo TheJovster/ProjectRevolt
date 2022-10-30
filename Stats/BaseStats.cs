@@ -1,5 +1,7 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
+using System.Net;
 
 namespace ProjectRevolt.Stats 
 {
@@ -44,7 +46,7 @@ namespace ProjectRevolt.Stats
 
         public float GetStat(Stat stat) 
         {
-            return progression.GetStat(stat, characterClass, GetLevel());
+            return progression.GetStat(stat, characterClass, GetLevel()) + GetAdditiveModifiers(stat);
         }
 
         public int GetLevel() 
@@ -56,7 +58,20 @@ namespace ProjectRevolt.Stats
             return currentLevel;
         }
 
-        public int CalculateLevel() 
+        private float GetAdditiveModifiers(Stat stat)
+        {
+            float total = 0;
+            foreach(IModifierProvider provider in GetComponents<IModifierProvider>()) 
+            {
+                foreach(float modifier in provider.GetAdditiveModifier(stat)) 
+                {
+                    total += modifier;
+                }
+            }
+            return total;
+        }
+
+        private int CalculateLevel() 
         {
             Experience experience = GetComponent<Experience>();
             if (experience == null) return startingLevel;

@@ -4,10 +4,11 @@ using ProjectRevolt.Movement;
 using ProjectRevolt.Attributes;
 using ProjectRevolt.Saving;
 using ProjectRevolt.Stats;
+using System.Collections.Generic;
 
 namespace ProjectRevolt.Combat 
 {
-    public class Fighter : MonoBehaviour, IAction, ISaveable
+    public class Fighter : MonoBehaviour, IAction, ISaveable, IModifierProvider
     {
         [SerializeField] private float timeBetweenAttacks = .75f;
         private float timeSinceLastAttack = Mathf.Infinity;
@@ -132,6 +133,14 @@ namespace ProjectRevolt.Combat
             animator.SetTrigger("StopAttack");
         }
 
+        public IEnumerable<float> GetAdditiveModifier(Stat stat)
+        {
+            if(stat == Stat.Damage) 
+            {
+                yield return currentWeapon.GetWeaponDamage();
+            }
+        }
+
 
         //Animation event
         private void Hit()
@@ -183,6 +192,8 @@ namespace ProjectRevolt.Combat
             Weapon weapon = Resources.Load<Weapon>(weaponName);
             EquipWeapon(weapon);
         }
+
+
     }
 }
 
