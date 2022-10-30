@@ -36,13 +36,19 @@ namespace ProjectRevolt.Attributes
         // Start is called before the first frame update
         void Start()
         {
-            
+
         }
 
         // Update is called once per frame
         void Update()
         {
+            
+        }
 
+        private void UpdateHealth()
+        {
+            maxHealth = GetComponent<BaseStats>().GetStat(Stat.Health); //performance hit? How expensive is this operation?
+            currentHealth = maxHealth;
         }
 
         public bool IsDead()
@@ -79,6 +85,11 @@ namespace ProjectRevolt.Attributes
         {
             return 100 * (currentHealth / maxHealth);
         }
+
+/*        public void SetHealthToMax() //have no idea if I'll be using this.
+        {
+            currentHealth = maxHealth;
+        }*/
 
         private void Die()
         {

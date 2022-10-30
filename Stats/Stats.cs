@@ -4,5 +4,6 @@ namespace ProjectRevolt.Stats
     {
         Health,
         ExperienceReward,
+        ExperienceToLevelUp,
     } 
 }

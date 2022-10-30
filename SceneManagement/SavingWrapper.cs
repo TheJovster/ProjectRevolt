@@ -6,7 +6,7 @@ namespace ProjectRevolt.SceneManagement
 {
     public class SavingWrapper : MonoBehaviour
     {
-        private SavingSystem savingSystem;
+        [SerializeField]private SavingSystem savingSystem;
         Fader fader;
 
         const string defaultSaveFile = "save";
@@ -14,14 +14,15 @@ namespace ProjectRevolt.SceneManagement
         private void Awake()
         {
             savingSystem = GetComponent<SavingSystem>();
-            fader = FindObjectOfType<Fader>();
+            StartCoroutine(LoadLastScene());
         }
 
-        private IEnumerator Start()
+        private IEnumerator LoadLastScene()
         {
+            fader = FindObjectOfType<Fader>();
             //fade out
             fader.FadeOutImmediate();
-            yield return savingSystem.LoadLastScene(defaultSaveFile);
+            yield return GetComponent<SavingSystem>().LoadLastScene(defaultSaveFile);
             //fade in
             yield return fader.FadeIn(1.5f);
         }
@@ -36,6 +37,10 @@ namespace ProjectRevolt.SceneManagement
             {
                 Load();
             }
+            if (Input.GetKeyDown(KeyCode.D)) 
+            {
+                Delete();
+            }
         }
 
         public void Save()
@@ -46,6 +51,11 @@ namespace ProjectRevolt.SceneManagement
         public void Load()
         {
             savingSystem.Load(defaultSaveFile);
+        }
+
+        public void Delete() 
+        {
+            savingSystem.Delete(defaultSaveFile);
         }
     }
 }

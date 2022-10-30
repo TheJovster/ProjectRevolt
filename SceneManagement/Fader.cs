@@ -8,7 +8,7 @@ namespace ProjectRevolt.SceneManagement
     public class Fader : MonoBehaviour
     {
         private CanvasGroup canvasGroup;
-        void Start()
+        void Awake()
         {
             canvasGroup = GetComponent<CanvasGroup>();
         }
