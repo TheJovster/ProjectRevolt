@@ -3,6 +3,7 @@ using ProjectRevolt.Core;
 using ProjectRevolt.Movement;
 using ProjectRevolt.Attributes;
 using ProjectRevolt.Saving;
+using ProjectRevolt.Stats;
 
 namespace ProjectRevolt.Combat 
 {
@@ -136,16 +137,19 @@ namespace ProjectRevolt.Combat
         private void Hit()
         {
             if (target == null) return;
+
+            float damageToTake = GetComponent<BaseStats>().GetStat(Stat.Damage);
             if (currentWeapon.HasProjectile()) 
             {
-                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, target, gameObject);
+                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, target, gameObject, damageToTake);
                 audioSource.PlayOneShot(currentWeapon.HitFXToPlay());
                 //instantiates projectile - set target
                 //object pooling?
             }
             else 
             {
-                target.TakeDamage(gameObject, currentWeapon.GetWeaponDamage());
+
+                target.TakeDamage(gameObject, damageToTake);
                 currentWeapon.GetPitchLevel();
                 currentWeapon.GetVolumeLevel();
                 audioSource.PlayOneShot(currentWeapon.HitFXToPlay());
