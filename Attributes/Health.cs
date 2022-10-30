@@ -2,6 +2,7 @@ using ProjectRevolt.Saving;
 using UnityEngine;
 using ProjectRevolt.Stats;
 using ProjectRevolt.Core;
+using System;
 
 namespace ProjectRevolt.Attributes 
 {
@@ -11,6 +12,8 @@ namespace ProjectRevolt.Attributes
         [SerializeField]private float maxHealth = 50f;
         [SerializeField]private float currentHealth;
         private bool isDead = false;
+
+        //delegates and events
 
         //animation
         private Animator animator;
@@ -36,7 +39,7 @@ namespace ProjectRevolt.Attributes
         // Start is called before the first frame update
         void Start()
         {
-
+            GetComponent<BaseStats>().onLevelUp += UpdateHealth;
         }
 
         // Update is called once per frame
@@ -45,7 +48,7 @@ namespace ProjectRevolt.Attributes
             
         }
 
-        private void UpdateHealth()
+        public void UpdateHealth()
         {
             maxHealth = GetComponent<BaseStats>().GetStat(Stat.Health); //performance hit? How expensive is this operation?
             currentHealth = maxHealth;
@@ -69,7 +72,7 @@ namespace ProjectRevolt.Attributes
                 }
                 else
                 {
-                    int takeDamageSFXIndex = Random.Range(0, takeDamageClips.Length);
+                    int takeDamageSFXIndex = UnityEngine.Random.Range(0, takeDamageClips.Length);
                     audioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
                     animator.ResetTrigger("Attack");
                     animator.SetTrigger("TakeDamage");

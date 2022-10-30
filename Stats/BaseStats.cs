@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
+using System;
 
 namespace ProjectRevolt.Stats 
 {
@@ -10,6 +8,13 @@ namespace ProjectRevolt.Stats
         [Range(1, 99)][SerializeField] private int startingLevel = 1;
         [SerializeField] private CharacterClass characterClass;
         [SerializeField] private Progression progression = null;
+
+        //actions and delegates
+        public event Action onLevelUp;
+
+        [Header("Visual and Sound FX")]
+        [SerializeField] private ParticleSystem levelUpVFX;
+        [SerializeField] private AudioClip levelUpSFX;
         private int currentLevel = 0;
 
         private void Start()
@@ -29,7 +34,10 @@ namespace ProjectRevolt.Stats
             {
                 //level up event
                 currentLevel = newLevel;
-                print("Leveled up!");
+                onLevelUp.Invoke();
+                levelUpVFX.Play();
+                GameObject.FindWithTag("Player").GetComponent<AudioSource>().PlayOneShot(levelUpSFX);
+                onLevelUp();
             }
             
         }
