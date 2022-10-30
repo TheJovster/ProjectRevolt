@@ -10,6 +10,7 @@ namespace ProjectRevolt.Combat
         [Header("Weapon Variables and Components")]
         [SerializeField] private float weaponRange = 2f;
         [SerializeField] private float weaponDamage = 20f;
+        [SerializeField] private float percentageBonus = 0f;
         [SerializeField] private Projectile projectile = null;
 
         const string weaponName = "Weapon";
@@ -96,6 +97,11 @@ namespace ProjectRevolt.Combat
         public float GetWeaponDamage() 
         {
             return weaponDamage;
+        }
+
+        public float GetPercentageBonus() 
+        {
+            return percentageBonus;
         }
 
         public float GetWeaponRange() 
