@@ -78,7 +78,7 @@ namespace ProjectRevolt.Control
 
         private bool InteractWithComponent()
         {
-            RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
+            RaycastHit[] hits = RaycastAllSorted();
             foreach(RaycastHit hit in hits) 
             {
                 IRaycastable[] raycastables = hit.transform.GetComponents<IRaycastable>();
@@ -92,6 +92,22 @@ namespace ProjectRevolt.Control
                 }
             }
             return false;
+        }
+
+        RaycastHit[] RaycastAllSorted()
+        {
+            //get all hits
+            RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
+            //build distance array
+            float[] distances = new float[hits.Length];
+            for(int i = 0; i < hits.Length; i++) 
+            {
+                distances[i] = hits[i].distance;
+            }
+            //sort by distance
+            Array.Sort(distances, hits);
+            //return
+            return hits;
         }
 
         private void SetCursor(CursorType type)
