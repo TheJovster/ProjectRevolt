@@ -6,6 +6,10 @@ namespace ProjectRevolt.Stats
         Grunt,
         Archer,
         Mage,
-        Knight
+        Knight,
+        GoblinGrunt,
+        GoblinWarrior,
+        GoblinShaman,
+        GoblinWarchief
     }
 }
