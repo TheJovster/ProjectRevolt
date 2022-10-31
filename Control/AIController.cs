@@ -13,6 +13,7 @@ namespace ProjectRevolt.Control
         //variables
         LazyValue<Vector3> guardPosition;
 
+        [SerializeField] private float speedFraction = 1f;
         [SerializeField] private float chaseDistance;
         
         [SerializeField] private float suspicionTime = 5f;
@@ -99,7 +100,7 @@ namespace ProjectRevolt.Control
             }
             if (timeSpentAtWaypoint > dwellTime)
             {
-                mover.StartMoveAction(nextPosition);
+                mover.StartMoveAction(nextPosition, speedFraction);
             }
             
         }

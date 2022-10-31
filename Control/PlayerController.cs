@@ -5,6 +5,7 @@ using ProjectRevolt.Combat;
 using ProjectRevolt.Core;
 using ProjectRevolt.Attributes;
 using System;
+using UnityEngine.AI;
 
 namespace ProjectRevolt.Control 
 {
@@ -26,6 +27,7 @@ namespace ProjectRevolt.Control
         Health health;
 
         [SerializeField] CursorMapping[] cursorMappings = null;
+        [SerializeField] private float maxNavMeshProjectionDistance = 1f;  
 
         void Awake()
         {
@@ -52,17 +54,36 @@ namespace ProjectRevolt.Control
 
         private bool InteractWithMovement()
         {
-            RaycastHit hit;
-            if (Physics.Raycast(GetMouseRay(), out hit))
+            Vector3 target;
+            bool hasHit = RaycastNavMesh(out target);
+            if (hasHit)
             {
                 if (Input.GetMouseButton(0)) 
                 {
-                    mover.StartMoveAction(hit.point);
+                    mover.StartMoveAction(target, 1f);
                 }
                 SetCursor(CursorType.Movement);
                 return true;
             }
             return false;
+        }
+
+        private bool RaycastNavMesh(out Vector3 target) 
+        {
+            target = new Vector3();
+
+            //raycast to terrain
+            RaycastHit hit;
+            bool hasHit = Physics.Raycast(GetMouseRay(), out hit);
+            if (!hasHit) return false;
+            //find nearest navmesh point
+            NavMeshHit navMeshHit;
+            bool hasCastToNavMesh = 
+                NavMesh.SamplePosition(hit.point, out navMeshHit,  maxNavMeshProjectionDistance, NavMesh.AllAreas);
+            if (!hasCastToNavMesh) return false;
+            //return true if we can find navmesh point
+            target = navMeshHit.position;
+            return true;
         }
 
         private bool InteractWithUI()

@@ -9,6 +9,8 @@ namespace ProjectRevolt.Movement
     public class Mover : MonoBehaviour, IAction, ISaveable
     {
         //variables
+        [SerializeField] private float maxMoveSpeed;
+        [SerializeField] private float maxNavPathLength = 40f;
         //components
         private Animator animator;
         private ActionScheduler actionScheduler;
@@ -38,15 +40,16 @@ namespace ProjectRevolt.Movement
             UpdateAnimator();
         }
 
-        public void StartMoveAction(Vector3 destination) 
+        public void StartMoveAction(Vector3 destination, float speedFraction) 
         {
             actionScheduler.StartAction(this);
-            MoveTo(destination);
+            MoveTo(destination, speedFraction);
         }
 
-        public void MoveTo(Vector3 destination)
+        public void MoveTo(Vector3 destination, float speedFraction)
         {
             navMeshAgent.destination = destination;
+            navMeshAgent.speed = maxMoveSpeed * Mathf.Clamp01(speedFraction);
             navMeshAgent.isStopped = false;
         }
 
