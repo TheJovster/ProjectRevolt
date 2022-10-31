@@ -1,19 +1,40 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using ProjectRevolt.Movement;
 using ProjectRevolt.Combat;
 using ProjectRevolt.Core;
 using ProjectRevolt.Attributes;
+using System;
 
 namespace ProjectRevolt.Control 
 {
     public class PlayerController : MonoBehaviour
     {
+        enum CursorType 
+        {
+            None,
+            Movement,
+            Combat,
+            UI
+
+        }
+        [System.Serializable]
+        struct CursorMapping 
+        {
+            public CursorType type;
+            public Texture2D texture;
+            public Vector2 hotspot;
+        }
+
+
         [SerializeField] private Camera mainCamera;
         Mover mover;
         Fighter fighter;
         Health health;
 
-        void Start()
+        [SerializeField] CursorMapping[] cursorMappings = null;
+
+        void Awake()
         {
             mover = GetComponent<Mover>();
             fighter = GetComponent<Fighter>();
@@ -21,12 +42,19 @@ namespace ProjectRevolt.Control
         }
         void Update()
         {
+            if (InteractWithUI())
+            {
+                
+                return;
+            }
             if (health.IsDead())
             {
+                SetCursor(CursorType.None);
                 return;
             }
             if (InteractWithCombat()) return;
             if (InteractWithMovement()) return;
+            SetCursor(CursorType.None);
         }
 
         private bool InteractWithCombat() 
@@ -45,6 +73,7 @@ namespace ProjectRevolt.Control
                 {
                     fighter.Attack(target.gameObject);
                 }
+                SetCursor(CursorType.Combat);
                 return true;
             }
             return false;
@@ -59,9 +88,39 @@ namespace ProjectRevolt.Control
                 {
                     mover.StartMoveAction(hit.point);
                 }
+                SetCursor(CursorType.Movement);
                 return true;
             }
             return false;
+        }
+
+        private bool InteractWithUI()
+        {
+            
+            if (EventSystem.current.IsPointerOverGameObject()) 
+            {
+                SetCursor(CursorType.UI);
+                return true;
+            }
+            return false;
+        }
+
+        private void SetCursor(CursorType type)
+        {
+            CursorMapping mapping = GetCursorMapping(type);
+            Cursor.SetCursor(mapping.texture, mapping.hotspot, CursorMode.Auto);
+        }
+
+        private CursorMapping GetCursorMapping(CursorType type) 
+        {
+            foreach (CursorMapping mapping in cursorMappings) 
+            {
+                if(mapping.type == type) 
+                {
+                    return mapping;
+                }
+            }
+            return cursorMappings[0];
         }
 
         private static Ray GetMouseRay()
