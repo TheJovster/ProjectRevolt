@@ -3,14 +3,15 @@ using UnityEngine;
 using ProjectRevolt.Stats;
 using ProjectRevolt.Core;
 using System;
+using GameDevTV.Utils;
+using UnityEngine.SceneManagement;
 
 namespace ProjectRevolt.Attributes 
 {
     public class Health : MonoBehaviour, IAction, ISaveable
     {
         [Header("Health Variables")]
-        [SerializeField]private float maxHealth = 50f;
-        [SerializeField]private float currentHealth;
+        [SerializeField]private LazyValue<float> healthPoints;
         private bool isDead = false;
 
         //delegates and events
@@ -28,13 +29,22 @@ namespace ProjectRevolt.Attributes
         [Header("VFX")]
         [SerializeField] private ParticleSystem bloodFX;
 
+        private void Awake()
+        {
+            healthPoints = new LazyValue<float>(GetInitialHealth);
+        }
+
+        private float GetInitialHealth() 
+        {
+            return GetComponent<BaseStats>().GetStat(Stat.Health);
+        }
+
         private void Start()
         {
-            maxHealth = GetComponent<BaseStats>().GetStat(Stat.Health);
-            currentHealth = maxHealth;
+            GetComponent<BaseStats>().onLevelUp += UpdateHealth;
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
-            GetComponent<BaseStats>().onLevelUp += UpdateHealth;
+            healthPoints.ForceInit();
         }
 
         void Update()
@@ -44,8 +54,7 @@ namespace ProjectRevolt.Attributes
 
         public void UpdateHealth()
         {
-            maxHealth = GetComponent<BaseStats>().GetStat(Stat.Health); //performance hit? How expensive is this operation?
-            currentHealth = maxHealth;
+            healthPoints.value = GetComponent<BaseStats>().GetStat(Stat.Health);
         }
 
         public bool IsDead()
@@ -58,9 +67,9 @@ namespace ProjectRevolt.Attributes
             if (!IsDead())
             {
                 bloodFX.Play();
-                currentHealth -= damageToTake;
+                healthPoints.value -= damageToTake;
                 Debug.Log(gameObject.name + " has taken " + damageToTake + " damage");
-                if (currentHealth <= 0)
+                if (healthPoints.value <= 0)
                 {
                     Die();
                     AwardExperience(instigator);
@@ -81,7 +90,7 @@ namespace ProjectRevolt.Attributes
 
         public float GetPercentage() 
         {
-            return 100 * (currentHealth / maxHealth);
+            return 100 * (healthPoints.value / GetComponent<BaseStats>().GetStat(Stat.Health));
         }
 
 /*        public void SetHealthToMax() //have no idea if I'll be using this.
@@ -91,8 +100,8 @@ namespace ProjectRevolt.Attributes
 
         private void Die()
         {
-            currentHealth = 0f;
-            animator.SetTrigger("Die"); //might want to substitute this with a ragdoll?
+            healthPoints.value = 0f;
+            GetComponent<Animator>().SetTrigger("Die"); //might want to substitute this with a ragdoll?
             audioSource.PlayOneShot(deathSFX);
             isDead = true;
             GetComponent<ActionScheduler>().CancelCurrentAction();
@@ -108,8 +117,8 @@ namespace ProjectRevolt.Attributes
         
         private void DieBetweenScenes() //this is called ONLY if the character is already dead.
         {
-            currentHealth = 0f;
-            animator.SetTrigger("Die"); //might want to substitute this with a ragdoll?
+            healthPoints.value = 0f;
+            GetComponent<Animator>().SetTrigger("Die"); //might want to substitute this with a ragdoll?
             isDead = true;
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }
@@ -121,16 +130,17 @@ namespace ProjectRevolt.Attributes
 
         public object CaptureState()
         {
-            return currentHealth;
+            return healthPoints.value;
         }
 
         public void RestoreState(object state)
         {
+            
             //restore healthPoints
-            currentHealth = (float)state;
+            healthPoints.value = (float)state;
 
             //possibly die
-            if(currentHealth <= 0) 
+            if(healthPoints.value <= 0) 
             {
                 DieBetweenScenes();
             }

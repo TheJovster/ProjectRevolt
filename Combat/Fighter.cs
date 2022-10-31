@@ -5,6 +5,7 @@ using ProjectRevolt.Attributes;
 using ProjectRevolt.Saving;
 using ProjectRevolt.Stats;
 using System.Collections.Generic;
+using GameDevTV.Utils;
 
 namespace ProjectRevolt.Combat 
 {
@@ -16,7 +17,7 @@ namespace ProjectRevolt.Combat
         //weapon
         [Header("Weapon Scriptable Object")]
         [SerializeField] private Weapon defaultWeapon = null;
-        private Weapon currentWeapon = null;
+        LazyValue<Weapon> currentWeapon = null;
 
         [Header("Hand Transforms")]
         [SerializeField] private Transform rightHandTransform = null;
@@ -36,14 +37,18 @@ namespace ProjectRevolt.Combat
             mover = GetComponent<Mover>();
             animator = GetComponent<Animator>();
             audioSource = GetComponent<AudioSource>();
+            currentWeapon = new LazyValue<Weapon>(SetupDefaultWeapon);
+        }
+
+        private Weapon SetupDefaultWeapon() 
+        {
+            AttachWeapon(defaultWeapon);
+            return defaultWeapon;
         }
 
         private void Start()
         {
-            if(currentWeapon == null) 
-            {
-                EquipWeapon(defaultWeapon);
-            }
+            currentWeapon.ForceInit();
         }
 
         private void Update()
@@ -92,12 +97,17 @@ namespace ProjectRevolt.Combat
 
         public void EquipWeapon(Weapon weapon)
         {
-            currentWeapon = weapon;
-            if (weapon.IsLeftHanded()) 
+            currentWeapon.value = weapon;
+            AttachWeapon(weapon);
+        }
+
+        private void AttachWeapon(Weapon weapon)
+        {
+            if (weapon.IsLeftHanded())
             {
                 weapon.Spawn(rightHandTransform, leftHandTransform, animator);
             }
-            else if (!weapon.IsLeftHanded()) 
+            else if (!weapon.IsLeftHanded())
             {
                 weapon.Spawn(rightHandTransform, leftHandTransform, animator);
             }
@@ -110,7 +120,7 @@ namespace ProjectRevolt.Combat
 
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, target.transform.position) < currentWeapon.GetWeaponRange();
+            return Vector3.Distance(transform.position, target.transform.position) < currentWeapon.value.GetWeaponRange();
         }
 
         public void Cancel()
@@ -136,7 +146,7 @@ namespace ProjectRevolt.Combat
         {
             if(stat == Stat.Damage) 
             {
-                yield return currentWeapon.GetWeaponDamage();
+                yield return currentWeapon.value.GetWeaponDamage();
             }
         }
 
@@ -144,7 +154,7 @@ namespace ProjectRevolt.Combat
         {
             if (stat == Stat.Damage)
             {
-                yield return currentWeapon.GetPercentageBonus();
+                yield return currentWeapon.value.GetPercentageBonus();
             }
         }
 
@@ -155,10 +165,10 @@ namespace ProjectRevolt.Combat
             if (target == null) return;
 
             float damageToTake = GetComponent<BaseStats>().GetStat(Stat.Damage);
-            if (currentWeapon.HasProjectile()) 
+            if (currentWeapon.value.HasProjectile()) 
             {
-                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, target, gameObject, damageToTake);
-                audioSource.PlayOneShot(currentWeapon.HitFXToPlay());
+                currentWeapon.value.LaunchProjectile(rightHandTransform, leftHandTransform, target, gameObject, damageToTake);
+                audioSource.PlayOneShot(currentWeapon.value.HitFXToPlay());
                 //instantiates projectile - set target
                 //object pooling?
             }
@@ -166,9 +176,9 @@ namespace ProjectRevolt.Combat
             {
 
                 target.TakeDamage(gameObject, damageToTake);
-                currentWeapon.GetPitchLevel();
-                currentWeapon.GetVolumeLevel();
-                audioSource.PlayOneShot(currentWeapon.HitFXToPlay());
+                currentWeapon.value.GetPitchLevel();
+                currentWeapon.value.GetVolumeLevel();
+                audioSource.PlayOneShot(currentWeapon.value.HitFXToPlay());
             }
             if (target.GetComponent<Health>().IsDead())
             {
@@ -178,9 +188,9 @@ namespace ProjectRevolt.Combat
 
         private void Swing() 
         {
-            currentWeapon.GetPitchLevel();
-            currentWeapon.GetVolumeLevel();
-            audioSource.PlayOneShot(currentWeapon.SwingFXToPlay());
+            currentWeapon.value.GetPitchLevel();
+            currentWeapon.value.GetVolumeLevel();
+            audioSource.PlayOneShot(currentWeapon.value.SwingFXToPlay());
         }
 
         private void Shoot() 
@@ -190,7 +200,7 @@ namespace ProjectRevolt.Combat
         //ISaveable interface implementation - basic iteration
         public object CaptureState()
         {
-            return currentWeapon.name;
+            return currentWeapon.value.name;
         }
 
         public void RestoreState(object state)

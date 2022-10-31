@@ -4,13 +4,14 @@ using ProjectRevolt.Combat;
 using ProjectRevolt.Core;
 using ProjectRevolt.Attributes;
 using System;
+using GameDevTV.Utils;
 
 namespace ProjectRevolt.Control 
 {
     public class AIController : MonoBehaviour
     {
         //variables
-        private Vector3 guardPosition;
+        LazyValue<Vector3> guardPosition;
 
         [SerializeField] private float chaseDistance;
         
@@ -31,14 +32,24 @@ namespace ProjectRevolt.Control
         //game objects
         private GameObject player;
 
-        void Start()
+        private void Awake()
         {
             fighter = GetComponent<Fighter>();
             mover = GetComponent<Mover>();
             health = GetComponent<Health>();
             player = GameObject.FindWithTag("Player");
 
-            guardPosition = transform.position;
+            guardPosition = new LazyValue<Vector3>(GetGuardPosition);
+        }
+
+        private Vector3 GetGuardPosition() 
+        {
+            return transform.position;
+        }
+
+        void Start()
+        {
+            guardPosition.ForceInit();
         }
 
         void Update()
@@ -76,7 +87,7 @@ namespace ProjectRevolt.Control
         }
         private void PatrolBehaviour()
         {
-            Vector3 nextPosition = guardPosition;
+            Vector3 nextPosition = guardPosition.value;
             if(patrolPath != null) 
             {
                 if(AtWaypoint()) 

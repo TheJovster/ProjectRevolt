@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using GameDevTV.Utils;
 
 namespace ProjectRevolt.Stats 
 {
@@ -19,25 +20,32 @@ namespace ProjectRevolt.Stats
         [Header("Visual and Sound FX")]
         [SerializeField] private ParticleSystem levelUpVFX;
         [SerializeField] private AudioClip levelUpSFX;
-        private int currentLevel = 0;
+        LazyValue<int> currentLevel;
 
-        private void Start()
+        private void Awake()
         {
-            currentLevel = CalculateLevel();
             Experience experience = GetComponent<Experience>();
-            if(experience != null) 
+            currentLevel = new LazyValue<int>(CalculateLevel);
+
+            if (experience != null)
             {
                 experience.onExperienceGained += UpdateLevel;
             }
+
+        }
+
+        private void Start()
+        {
+            currentLevel.value = CalculateLevel();
         }
 
         private void UpdateLevel()
         {
             int newLevel = CalculateLevel();
-            if(newLevel > currentLevel) 
+            if(newLevel > currentLevel.value) 
             {
                 //level up event
-                currentLevel = newLevel;
+                currentLevel.value = newLevel;
                 onLevelUp.Invoke();
                 levelUpVFX.Play();
                 GameObject.FindWithTag("Player").GetComponent<AudioSource>().PlayOneShot(levelUpSFX);
@@ -60,11 +68,7 @@ namespace ProjectRevolt.Stats
 
         public int GetLevel() 
         {
-            if(currentLevel < 1) 
-            {
-                currentLevel = CalculateLevel();
-            }
-            return currentLevel;
+            return currentLevel.value;
         }
 
         private float GetAdditiveModifiers(Stat stat)
