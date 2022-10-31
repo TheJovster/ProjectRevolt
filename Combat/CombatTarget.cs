@@ -1,19 +1,28 @@
 using UnityEngine;
 using ProjectRevolt.Attributes;
+using ProjectRevolt.Control;
+using Unity.Burst.CompilerServices;
 
 namespace ProjectRevolt.Combat 
 {
     [RequireComponent(typeof(Health))]
-    public class CombatTarget : MonoBehaviour
+    public class CombatTarget : MonoBehaviour, IRaycastable
     {
-        private void Start()
+        public bool HandleRaycast(PlayerController callingController)
         {
-
+            if (!callingController.GetComponent<Fighter>().CanAttack(gameObject))
+            {
+                return false;
+            }
+            if (Input.GetMouseButton(0))
+            {
+                callingController.GetComponent<Fighter>().Attack(gameObject);
+            }
+            return true;
         }
-
-        private void Update()
+        public CursorType GetCursorType()
         {
-
+            return CursorType.Combat;
         }
     }
 }
