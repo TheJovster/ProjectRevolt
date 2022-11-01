@@ -99,6 +99,7 @@ namespace ProjectRevolt.Combat
 
         public void EquipWeapon(WeaponConfig weapon)
         {
+            currentWeaponConfig = weapon;
             currentWeapon.value = AttachWeapon(weapon); 
         }
 
@@ -156,24 +157,24 @@ namespace ProjectRevolt.Combat
         //Animation event
         private void Hit()
         {
-            if (target == null) return;
 
-            if(currentWeapon.value != null) 
+            if (currentWeapon.value != null)
             {
                 currentWeapon.value.OnHit();
             }
+
+            if (target == null) return;
+
 
             float damageToTake = GetComponent<BaseStats>().GetStat(Stat.Damage);
             if (currentWeaponConfig.HasProjectile()) 
             {
                 currentWeaponConfig.LaunchProjectile(rightHandTransform, leftHandTransform, target, gameObject, damageToTake);
-                //instantiates projectile - set target
-                //object pooling?
             }
             else 
             {
                 target.TakeDamage(gameObject, damageToTake);
-                //audio?
+                
             }
             if (target.GetComponent<Health>().IsDead())
             {

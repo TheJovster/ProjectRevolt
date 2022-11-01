@@ -41,7 +41,6 @@ namespace ProjectRevolt.Control
         {
             if (InteractWithUI())
             {
-                
                 return;
             }
             if (health.IsDead())
