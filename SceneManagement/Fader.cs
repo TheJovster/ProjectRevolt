@@ -8,35 +8,41 @@ namespace ProjectRevolt.SceneManagement
     public class Fader : MonoBehaviour
     {
         private CanvasGroup canvasGroup;
+        private Coroutine currentlyActiveFade = null;
+
         void Awake()
         {
             canvasGroup = GetComponent<CanvasGroup>();
         }
 
-        void Update()
+        private IEnumerator FadeRoutine(float target, float time) 
         {
-
-        }
-
-        public IEnumerator FadeOut(float time)
-        {
-            while(canvasGroup.alpha < 1)
+            while (!Mathf.Approximately(canvasGroup.alpha, target))
             {
-                //float timeToFadeout = 1 / (time / Time.deltaTime);
-                canvasGroup.alpha += Time.deltaTime / time;
+
+                canvasGroup.alpha = Mathf.MoveTowards(canvasGroup.alpha, target, Time.deltaTime / time);
                 yield return null;
             }
-
         }
 
-        public IEnumerator FadeIn(float time) 
+        public Coroutine Fade(float target, float time) 
         {
-            while(canvasGroup.alpha > 0) 
+            if (currentlyActiveFade != null)
             {
-                canvasGroup.alpha -= Time.deltaTime / time;
-                yield return null;
+                StopCoroutine(currentlyActiveFade);
             }
-            
+            currentlyActiveFade = StartCoroutine(FadeRoutine(target, time));
+            return currentlyActiveFade;
+        }
+
+        public Coroutine FadeIn(float time) 
+        {
+            return Fade(0, time);
+        }
+
+        public Coroutine FadeOut(float time) 
+        {
+            return Fade(1, time);
         }
 
         public void FadeOutImmediate() 

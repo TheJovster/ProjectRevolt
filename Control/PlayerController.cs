@@ -62,6 +62,10 @@ namespace ProjectRevolt.Control
             {
                 if (Input.GetMouseButton(0)) 
                 {
+                    if (mover.enabled == false) 
+                    {
+                        return false; 
+                    }
                     mover.StartMoveAction(target, 1f);
                 }
                 SetCursor(CursorType.Movement);

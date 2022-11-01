@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using ProjectRevolt.Saving;
+using ProjectRevolt.Movement;
 
 namespace ProjectRevolt.SceneManagement 
 {
@@ -54,13 +55,16 @@ namespace ProjectRevolt.SceneManagement
 
             Fader fader = FindObjectOfType<Fader>();
             SavingWrapper savingWrapper = FindObjectOfType<SavingWrapper>();
+            //remove control
+            GameObject.FindWithTag("Player").GetComponent<Mover>().enabled = false;
 
             yield return fader.FadeOut(fadeOutTime);
 
             savingWrapper.Save();
 
             yield return SceneManager.LoadSceneAsync(sceneToLoad);
-
+            //remove control
+            GameObject.FindWithTag("Player").GetComponent<Mover>().enabled = false;
             savingWrapper.Load();
 
             Portal otherPortal = GetOtherPortal();
@@ -69,7 +73,10 @@ namespace ProjectRevolt.SceneManagement
             savingWrapper.Save();
 
             yield return new WaitForSeconds(fadeWaitTime);
-            yield return fader.FadeIn(fadeOutTime);
+            fader.FadeIn(fadeInTime);
+
+            //restore control
+            GameObject.FindWithTag("Player").GetComponent<Mover>().enabled = true;
             Destroy(gameObject);
         }
 

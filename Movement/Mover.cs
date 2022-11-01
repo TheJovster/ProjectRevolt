@@ -20,7 +20,7 @@ namespace ProjectRevolt.Movement
         private NavMeshAgent navMeshAgent;
 
         //sound
-        private AudioSource audioSource;
+        [SerializeField] private AudioSource stepAudioSource;
         [SerializeField] private AudioClip[] footsteps;
         [Range(0.1f, 0.5f)][SerializeField] private float volumeChangeMultiplier = .2f;
         [Range(0.1f, 0.5f)][SerializeField] private float pitchChangeMultiplier = .2f;
@@ -31,7 +31,6 @@ namespace ProjectRevolt.Movement
             health = GetComponent<Health>();
             navMeshAgent = GetComponent<NavMeshAgent>();
             animator = GetComponent<Animator>();
-            audioSource = GetComponent<AudioSource>();
         }
 
         void Update()
@@ -69,10 +68,9 @@ namespace ProjectRevolt.Movement
         //animation events
         private void Step() 
         {
-            int clipIndex = Random.Range(0, footsteps.Length);
-            audioSource.volume = Random.Range(1 - volumeChangeMultiplier, 1);
-            audioSource.pitch = Random.Range(1 - pitchChangeMultiplier, 1);
-            audioSource.PlayOneShot(footsteps[clipIndex]);
+            int stepSFXIndex = Random.Range(0, footsteps.Length);
+            stepAudioSource.PlayOneShot(footsteps[stepSFXIndex]);
+
         }
 
         public object CaptureState()

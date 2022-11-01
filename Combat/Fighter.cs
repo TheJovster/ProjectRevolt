@@ -28,15 +28,14 @@ namespace ProjectRevolt.Combat
         private Mover mover;
         private ActionScheduler actionScheduler;
 
-        //sound manager
-        private AudioSource audioSource;
+        [Header("Audio")]
+        [SerializeField] private AudioSource weaponAudioSource;
 
         private void Awake()
         {
             actionScheduler = GetComponent<ActionScheduler>();
             mover = GetComponent<Mover>();
             animator = GetComponent<Animator>();
-            audioSource = GetComponent<AudioSource>();
             currentWeapon = new LazyValue<Weapon>(SetupDefaultWeapon);
         }
 
@@ -167,18 +166,16 @@ namespace ProjectRevolt.Combat
             float damageToTake = GetComponent<BaseStats>().GetStat(Stat.Damage);
             if (currentWeapon.value.HasProjectile()) 
             {
+                weaponAudioSource.PlayOneShot(currentWeapon.value.SwingFXToPlay());
                 currentWeapon.value.LaunchProjectile(rightHandTransform, leftHandTransform, target, gameObject, damageToTake);
-                audioSource.PlayOneShot(currentWeapon.value.HitFXToPlay());
+                weaponAudioSource.PlayOneShot(currentWeapon.value.ProjectileSFX());
                 //instantiates projectile - set target
                 //object pooling?
             }
             else 
             {
-
                 target.TakeDamage(gameObject, damageToTake);
-                currentWeapon.value.GetPitchLevel();
-                currentWeapon.value.GetVolumeLevel();
-                audioSource.PlayOneShot(currentWeapon.value.HitFXToPlay());
+                //audio?
             }
             if (target.GetComponent<Health>().IsDead())
             {
@@ -186,11 +183,9 @@ namespace ProjectRevolt.Combat
             }
         }
 
-        private void Swing() 
+        private void Swing() //might remove?
         {
-            currentWeapon.value.GetPitchLevel();
-            currentWeapon.value.GetVolumeLevel();
-            audioSource.PlayOneShot(currentWeapon.value.SwingFXToPlay());
+            weaponAudioSource.PlayOneShot(currentWeapon.value.SwingFXToPlay());
         }
 
         private void Shoot() 

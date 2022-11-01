@@ -28,9 +28,9 @@ namespace ProjectRevolt.Attributes
 
         //Audio
         [Header("Audio")]
+        [SerializeField] private AudioSource damageAudioSource;
         [SerializeField] private AudioClip[] takeDamageClips;
         [SerializeField] private AudioClip deathSFX;
-        private AudioSource audioSource;
 
         //visual FX
         [Header("VFX")]
@@ -50,7 +50,6 @@ namespace ProjectRevolt.Attributes
         {
             GetComponent<BaseStats>().onLevelUp += UpdateHealth;
             animator = GetComponent<Animator>();
-            audioSource = GetComponent<AudioSource>();
             healthPoints.ForceInit();
         }
 
@@ -84,9 +83,8 @@ namespace ProjectRevolt.Attributes
                 }
                 else
                 {
-                    
                     int takeDamageSFXIndex = UnityEngine.Random.Range(0, takeDamageClips.Length);
-                    audioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
+                    damageAudioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
                     animator.ResetTrigger("Attack");
                     animator.SetTrigger("TakeDamage");
                 }
@@ -99,7 +97,7 @@ namespace ProjectRevolt.Attributes
 
         public float GetPercentage() 
         {
-            return 100 * (healthPoints.value / GetComponent<BaseStats>().GetStat(Stat.Health));
+            return 100 * GetFraction();
         }
 
 /*        public void SetHealthToMax() //have no idea if I'll be using this.
@@ -107,11 +105,16 @@ namespace ProjectRevolt.Attributes
             currentHealth = maxHealth;
         }*/
 
+        public float GetFraction() 
+        {
+            return healthPoints.value / GetComponent<BaseStats>().GetStat(Stat.Health);
+        }
+
         private void Die()
         {
             healthPoints.value = 0f;
+            damageAudioSource.PlayOneShot(deathSFX);
             GetComponent<Animator>().SetTrigger("Die"); //might want to substitute this with a ragdoll?
-            audioSource.PlayOneShot(deathSFX);
             isDead = true;
             GetComponent<ActionScheduler>().CancelCurrentAction();
         }

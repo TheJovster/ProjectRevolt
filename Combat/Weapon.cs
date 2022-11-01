@@ -31,6 +31,7 @@ namespace ProjectRevolt.Combat
         [Header("Audio and Sound")]
         [SerializeField] private AudioClip[] swingEffects;
         [SerializeField] private AudioClip[] hitEffects;
+        [SerializeField] private AudioClip[] projectileFlightEffects;
         [Range(.1f, .5f)][SerializeField] private float volumeChangeMultiplier = .2f;
         [Range(.1f, .5f)][SerializeField] private float pitchChangeMultiplier = .2f;
 
@@ -121,6 +122,12 @@ namespace ProjectRevolt.Combat
         {
             int swingSFXIndex = Random.Range(0, swingEffects.Length);
             return swingEffects[swingSFXIndex];
+        }
+
+        public AudioClip ProjectileSFX() 
+        {
+            int projectileSoundIndex = Random.Range(0, projectileFlightEffects.Length);
+            return projectileFlightEffects[projectileSoundIndex];
         }
 
         public float GetPitchLevel() 
