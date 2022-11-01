@@ -175,6 +175,7 @@ namespace ProjectRevolt.Combat
             else 
             {
                 target.TakeDamage(gameObject, damageToTake);
+                weaponAudioSource.PlayOneShot(currentWeapon.value.HitFXToPlay());
                 //audio?
             }
             if (target.GetComponent<Health>().IsDead())
