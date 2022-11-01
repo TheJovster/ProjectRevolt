@@ -6,6 +6,7 @@ using ProjectRevolt.Saving;
 using ProjectRevolt.Stats;
 using System.Collections.Generic;
 using GameDevTV.Utils;
+using Unity.VisualScripting;
 
 namespace ProjectRevolt.Combat 
 {
@@ -16,8 +17,9 @@ namespace ProjectRevolt.Combat
 
         //weapon
         [Header("Weapon Scriptable Object")]
-        [SerializeField] private Weapon defaultWeapon = null;
-        LazyValue<Weapon> currentWeapon = null;
+        [SerializeField] private WeaponConfig defaultWeaponConfig = null;
+        WeaponConfig currentWeaponConfig = null;
+        LazyValue<Weapon> currentWeapon;
 
         [Header("Hand Transforms")]
         [SerializeField] private Transform rightHandTransform = null;
@@ -36,15 +38,16 @@ namespace ProjectRevolt.Combat
             actionScheduler = GetComponent<ActionScheduler>();
             mover = GetComponent<Mover>();
             animator = GetComponent<Animator>();
+            currentWeaponConfig = defaultWeaponConfig;
             currentWeapon = new LazyValue<Weapon>(SetupDefaultWeapon);
         }
 
+
+
         private Weapon SetupDefaultWeapon() 
         {
-            AttachWeapon(defaultWeapon);
-            return defaultWeapon;
+            return AttachWeapon(defaultWeaponConfig);
         }
-
         private void Start()
         {
             currentWeapon.ForceInit();
@@ -94,22 +97,14 @@ namespace ProjectRevolt.Combat
             //more stuff to add
         }
 
-        public void EquipWeapon(Weapon weapon)
+        public void EquipWeapon(WeaponConfig weapon)
         {
-            currentWeapon.value = weapon;
-            AttachWeapon(weapon);
+            currentWeapon.value = AttachWeapon(weapon); 
         }
 
-        private void AttachWeapon(Weapon weapon)
+        private Weapon AttachWeapon(WeaponConfig weapon)
         {
-            if (weapon.IsLeftHanded())
-            {
-                weapon.Spawn(rightHandTransform, leftHandTransform, animator);
-            }
-            else if (!weapon.IsLeftHanded())
-            {
-                weapon.Spawn(rightHandTransform, leftHandTransform, animator);
-            }
+            return  weapon.Spawn(rightHandTransform, leftHandTransform, animator);
         }
 
         public Health GetTarget() 
@@ -119,7 +114,7 @@ namespace ProjectRevolt.Combat
 
         private bool GetIsInRange()
         {
-            return Vector3.Distance(transform.position, target.transform.position) < currentWeapon.value.GetWeaponRange();
+            return Vector3.Distance(transform.position, target.transform.position) < currentWeaponConfig.GetWeaponRange();
         }
 
         public void Cancel()
@@ -145,7 +140,7 @@ namespace ProjectRevolt.Combat
         {
             if(stat == Stat.Damage) 
             {
-                yield return currentWeapon.value.GetWeaponDamage();
+                yield return currentWeaponConfig.GetWeaponDamage();
             }
         }
 
@@ -153,7 +148,7 @@ namespace ProjectRevolt.Combat
         {
             if (stat == Stat.Damage)
             {
-                yield return currentWeapon.value.GetPercentageBonus();
+                yield return currentWeaponConfig.GetPercentageBonus();
             }
         }
 
@@ -163,30 +158,27 @@ namespace ProjectRevolt.Combat
         {
             if (target == null) return;
 
-            float damageToTake = GetComponent<BaseStats>().GetStat(Stat.Damage);
-            if (currentWeapon.value.HasProjectile()) 
+            if(currentWeapon.value != null) 
             {
-                weaponAudioSource.PlayOneShot(currentWeapon.value.SwingFXToPlay());
-                currentWeapon.value.LaunchProjectile(rightHandTransform, leftHandTransform, target, gameObject, damageToTake);
-                weaponAudioSource.PlayOneShot(currentWeapon.value.ProjectileSFX());
+                currentWeapon.value.OnHit();
+            }
+
+            float damageToTake = GetComponent<BaseStats>().GetStat(Stat.Damage);
+            if (currentWeaponConfig.HasProjectile()) 
+            {
+                currentWeaponConfig.LaunchProjectile(rightHandTransform, leftHandTransform, target, gameObject, damageToTake);
                 //instantiates projectile - set target
                 //object pooling?
             }
             else 
             {
                 target.TakeDamage(gameObject, damageToTake);
-                weaponAudioSource.PlayOneShot(currentWeapon.value.HitFXToPlay());
                 //audio?
             }
             if (target.GetComponent<Health>().IsDead())
             {
                 Cancel();
             }
-        }
-
-        private void Swing() //might remove?
-        {
-            weaponAudioSource.PlayOneShot(currentWeapon.value.SwingFXToPlay());
         }
 
         private void Shoot() 
@@ -196,13 +188,13 @@ namespace ProjectRevolt.Combat
         //ISaveable interface implementation - basic iteration
         public object CaptureState()
         {
-            return currentWeapon.value.name;
+            return currentWeaponConfig.name;
         }
 
         public void RestoreState(object state)
         {
             string weaponName = (string)state;
-            Weapon weapon = Resources.Load<Weapon>(weaponName);
+            WeaponConfig weapon = Resources.Load<WeaponConfig>(weaponName);
             EquipWeapon(weapon);
         }
 
