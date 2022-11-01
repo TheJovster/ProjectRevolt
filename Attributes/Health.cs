@@ -4,7 +4,7 @@ using ProjectRevolt.Stats;
 using ProjectRevolt.Core;
 using System;
 using GameDevTV.Utils;
-using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 namespace ProjectRevolt.Attributes 
 {
@@ -13,6 +13,13 @@ namespace ProjectRevolt.Attributes
         [Header("Health Variables")]
         [SerializeField]private LazyValue<float> healthPoints;
         private bool isDead = false;
+
+        [SerializeField] TakeDamageEvent takeDamage;
+
+        [Serializable]
+        public class TakeDamageEvent : UnityEvent<float> 
+        {
+        }
 
         //delegates and events
 
@@ -68,6 +75,7 @@ namespace ProjectRevolt.Attributes
             {
                 bloodFX.Play();
                 healthPoints.value -= damageToTake;
+                takeDamage.Invoke(damageToTake);
                 Debug.Log(gameObject.name + " has taken " + damageToTake + " damage");
                 if (healthPoints.value <= 0)
                 {
@@ -76,6 +84,7 @@ namespace ProjectRevolt.Attributes
                 }
                 else
                 {
+                    
                     int takeDamageSFXIndex = UnityEngine.Random.Range(0, takeDamageClips.Length);
                     audioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
                     animator.ResetTrigger("Attack");
