@@ -68,6 +68,15 @@ namespace ProjectRevolt.Attributes
             return isDead;
         }
 
+        public void Heal(float healAmount) 
+        {
+            healthPoints.value += healAmount;
+            if(healthPoints.value > GetComponent<BaseStats>().GetStat(Stat.Health)) 
+            {
+                healthPoints.value = GetComponent<BaseStats>().GetStat(Stat.Health);
+            }
+        }
+
         public void TakeDamage(GameObject instigator, float damageToTake)
         {
             if (!IsDead())
