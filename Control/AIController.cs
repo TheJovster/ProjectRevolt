@@ -18,11 +18,19 @@ namespace ProjectRevolt.Control
         
         [SerializeField] private float suspicionTime = 5f;
         [SerializeField] private float dwellTime = 4f;
+        [SerializeField] private float aggroCooldownTime = 5f;
+
+
+        [Tooltip("The radius in which the enemy mobs start attacking the player")]
+        [SerializeField] private float globalAggroRadius;
+
         [SerializeField] private float waypointTolerance = 1f;
+        
 
         private int currentWaypointIndex = 0;
         private float timeSpentAtWaypoint = Mathf.Infinity;
         private float timeSinceLastSawPlayer = Mathf.Infinity;
+        private float timeSinceAggrevated = Mathf.Infinity;
 
         //components
         private Fighter fighter;
@@ -60,7 +68,7 @@ namespace ProjectRevolt.Control
             {
                 return;
             }
-            if (InAttackRangeOfPlayer() && fighter.CanAttack(player)) //attack and chase behaviour
+            if (IsAggravated() && fighter.CanAttack(player)) //attack and chase behaviour
             {
                 AttackBehaviour();
             }
@@ -75,13 +83,17 @@ namespace ProjectRevolt.Control
             UpdateTimers();
         }
 
-
         //behaviours
         private void AttackBehaviour()
         {
             timeSinceLastSawPlayer = 0;
             fighter.Attack(player);
+
+            AggravateNearbyEnemies();
         }
+
+
+
         private void SuspicionBehaviour()
         {
             GetComponent<ActionScheduler>().CancelCurrentAction();
@@ -102,7 +114,25 @@ namespace ProjectRevolt.Control
             {
                 mover.StartMoveAction(nextPosition, speedFraction);
             }
-            
+        }
+
+        private void AggravateNearbyEnemies()
+        {
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, globalAggroRadius, Vector3.up, 0f);
+            foreach(RaycastHit hit in hits) 
+            {
+                AIController aiController = hit.collider.GetComponent<AIController>();
+                if(aiController == null) 
+                {
+                    continue;
+                }
+                aiController.Aggrevate();
+            }
+        }
+
+        public void Aggrevate() 
+        {
+            timeSinceAggrevated = 0f;
         }
 
         //Patrol Behaviour methods
@@ -122,9 +152,9 @@ namespace ProjectRevolt.Control
         }
 
         //calculations
-        private bool InAttackRangeOfPlayer() 
+        private bool IsAggravated() 
         {
-            return Vector3.Distance(player.transform.position, transform.position) < chaseDistance;
+            return Vector3.Distance(player.transform.position, transform.position) < chaseDistance || timeSinceAggrevated < aggroCooldownTime;
         }
         private void OnDrawGizmosSelected()
         {
@@ -136,6 +166,7 @@ namespace ProjectRevolt.Control
         {
             timeSinceLastSawPlayer += Time.deltaTime;
             timeSpentAtWaypoint += Time.deltaTime;
+            timeSinceAggrevated += Time.deltaTime;
         }
     }
 

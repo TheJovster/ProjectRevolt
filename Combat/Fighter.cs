@@ -6,7 +6,6 @@ using ProjectRevolt.Saving;
 using ProjectRevolt.Stats;
 using System.Collections.Generic;
 using GameDevTV.Utils;
-using Unity.VisualScripting;
 
 namespace ProjectRevolt.Combat 
 {
@@ -60,7 +59,7 @@ namespace ProjectRevolt.Combat
             if (target == null) return;
             if (target.IsDead()) return;
 
-            if (!GetIsInRange())
+            if (!GetIsInRange(target.transform))
             {
                 mover.MoveTo(target.transform.position, 1f);
             }
@@ -80,6 +79,8 @@ namespace ProjectRevolt.Combat
         public bool CanAttack(GameObject combatTarget) 
         {
             if (combatTarget == null) return false;
+            if (!mover.CanMoveTo(combatTarget.transform.position) && !GetIsInRange(combatTarget.transform)) 
+            { return false; }
 
             Health combatTargetToTest = combatTarget.GetComponent<Health>();
             return combatTarget != null && !combatTargetToTest.IsDead();
@@ -113,9 +114,9 @@ namespace ProjectRevolt.Combat
             return target;
         }
 
-        private bool GetIsInRange()
+        private bool GetIsInRange(Transform targetTransform)
         {
-            return Vector3.Distance(transform.position, target.transform.position) < currentWeaponConfig.GetWeaponRange();
+            return Vector3.Distance(transform.position, targetTransform.position) < currentWeaponConfig.GetWeaponRange();
         }
 
         public void Cancel()

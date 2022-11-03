@@ -29,7 +29,8 @@ namespace ProjectRevolt.Control
 
         [SerializeField] CursorMapping[] cursorMappings = null;
         [SerializeField] private float maxNavMeshProjectionDistance = 1f;
-        [SerializeField] private float maxNavPathLength = 40f;
+        [SerializeField] private float raycastRadius = 1f;
+
 
         void Awake()
         {
@@ -59,6 +60,9 @@ namespace ProjectRevolt.Control
             bool hasHit = RaycastNavMesh(out target);
             if (hasHit)
             {
+                if (!mover.CanMoveTo(target)) { return false; }
+
+
                 if (Input.GetMouseButton(0)) 
                 {
                     if (mover.enabled == false) 
@@ -88,28 +92,13 @@ namespace ProjectRevolt.Control
             if (!hasCastToNavMesh) return false;
             //return true if we can find navmesh point
             target = navMeshHit.position;
+            //nav mesh path length calculation
 
-            NavMeshPath path = new NavMeshPath();
-            bool hasPath = NavMesh.CalculatePath(transform.position, target, NavMesh.AllAreas, path);
-            if (!hasPath) return false;
-            if (path.status != NavMeshPathStatus.PathComplete) return false;
-
-            if (GetPathLength(path) > maxNavPathLength) return false;
 
             return true;
         }
 
-        private float GetPathLength(NavMeshPath path)
-        {
-            float total = 0;
-            if(path.corners.Length < 2) return total;
-            for(int i = 0; i < path.corners.Length - 1; i++) 
-            {
-                total += Vector3.Distance(path.corners[i], path.corners[i + 1]);
-            }
 
-            return total;
-        }
 
         private bool InteractWithUI()
         {
@@ -143,7 +132,7 @@ namespace ProjectRevolt.Control
         RaycastHit[] RaycastAllSorted()
         {
             //get all hits
-            RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
+            RaycastHit[] hits = Physics.SphereCastAll(GetMouseRay(), raycastRadius);
             //build distance array
             float[] distances = new float[hits.Length];
             for(int i = 0; i < hits.Length; i++) 
