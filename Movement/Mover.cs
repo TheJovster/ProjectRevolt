@@ -25,12 +25,17 @@ namespace ProjectRevolt.Movement
         [Range(0.1f, 0.5f)][SerializeField] private float volumeChangeMultiplier = .2f;
         [Range(0.1f, 0.5f)][SerializeField] private float pitchChangeMultiplier = .2f;
 
+        private void Awake()
+        {
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            health = GetComponent<Health>();
+        }
+
         void Start()
         {
             actionScheduler = GetComponent<ActionScheduler>();
-            health = GetComponent<Health>();
-            navMeshAgent = GetComponent<NavMeshAgent>();
             animator = GetComponent<Animator>();
+
         }
 
         void Update()
