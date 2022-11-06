@@ -6,6 +6,10 @@ namespace ProjectRevolt.SceneManagement
 {
     public class SavingWrapper : MonoBehaviour
     {
+        [SerializeField] KeyCode saveKey = KeyCode.S;
+        [SerializeField] KeyCode loadKey = KeyCode.L;
+        [SerializeField] KeyCode deleteKey = KeyCode.Delete;
+
         [SerializeField]private SavingSystem savingSystem;
         Fader fader;
 
@@ -29,15 +33,15 @@ namespace ProjectRevolt.SceneManagement
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.S))
+            if (Input.GetKeyDown(saveKey))
             {
                 Save();
             }
-            if (Input.GetKeyDown(KeyCode.L))
+            if (Input.GetKeyDown(loadKey))
             {
                 Load();
             }
-            if (Input.GetKeyDown(KeyCode.D)) 
+            if (Input.GetKeyDown(deleteKey)) 
             {
                 Delete();
             }
@@ -50,7 +54,7 @@ namespace ProjectRevolt.SceneManagement
 
         public void Load()
         {
-            savingSystem.Load(defaultSaveFile);
+            StartCoroutine(savingSystem.LoadLastScene(defaultSaveFile));
         }
 
         public void Delete() 

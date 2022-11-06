@@ -16,14 +16,12 @@ namespace ProjectRevolt.Saving
             //get the state
             Dictionary<string, object> state = LoadFile(saveFile);
             //load last scene
+            int buildIndex = SceneManager.GetActiveScene().buildIndex;
             if (state.ContainsKey("lastSceneBuildIndex"))
             {
-                int buildIndex = (int)state["lastSceneBuildIndex"];
-                if (buildIndex != SceneManager.GetActiveScene().buildIndex)
-                {
-                    yield return SceneManager.LoadSceneAsync(buildIndex);
-                }
+                buildIndex = (int)state["lastSceneBuildIndex"];
             }
+            yield return SceneManager.LoadSceneAsync(buildIndex);
             //restore state
             RestoreState(state);
         }
@@ -35,14 +33,13 @@ namespace ProjectRevolt.Saving
             SaveFile(saveFile, state);
         }
 
-        public void Load(string saveFile) //de-serializes and decodes data (reads it)
+        private void Load(string saveFile) //de-serializes and decodes data (reads it)
         {
             RestoreState(LoadFile(saveFile));
         }
 
         public void Delete(string saveFile) 
         {
-            string path = GetPathFromSaveFile(saveFile);
             File.Delete(saveFile);
         }
 

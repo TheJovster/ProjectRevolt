@@ -1,44 +1,56 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using ProjectRevolt.Core.UI.Dragging;
+using ProjectRevolt.Inventories;
 //provided by GameDev.tv
+
 namespace ProjectRevolt.UI.Inventories 
 {
-    public class InventorySlotUI : MonoBehaviour, IDragContainer<Sprite>
+    public class InventorySlotUI : MonoBehaviour, IItemHolder, IDragContainer<InventoryItem>
     {
         // CONFIG DATA
         [SerializeField] InventoryItemIcon icon = null;
 
+        // STATE
+        int index;
+        InventoryItem item;
+        Inventory inventory;
+
         // PUBLIC
 
-        public int MaxAcceptable(Sprite item)
+        public void Setup(Inventory inventory, int index)
         {
-            if (GetItem() == null)
+            this.inventory = inventory;
+            this.index = index;
+            icon.SetItem(inventory.GetItemInSlot(index), inventory.GetNumberInSlot(index));
+        }
+
+        public int MaxAcceptable(InventoryItem item)
+        {
+            if (inventory.HasSpaceFor(item))
             {
                 return int.MaxValue;
             }
             return 0;
         }
 
-        public void AddItems(Sprite item, int number)
+        public void AddItems(InventoryItem item, int number)
         {
-            icon.SetItem(item);
+            inventory.AddItemToSlot(index, item, number);
         }
 
-        public Sprite GetItem()
+        public InventoryItem GetItem()
         {
-            return icon.GetItem();
+            return inventory.GetItemInSlot(index);
         }
 
         public int GetNumber()
         {
-            return 1;
+            return inventory.GetNumberInSlot(index);
         }
 
         public void RemoveItems(int number)
         {
-            icon.SetItem(null);
+            inventory.RemoveFromSlot(index, number);
         }
     }
 }

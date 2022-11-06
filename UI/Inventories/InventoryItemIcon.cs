@@ -1,3 +1,5 @@
+using ProjectRevolt.Inventories;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,9 +14,18 @@ namespace ProjectRevolt.UI.Inventories
     [RequireComponent(typeof(Image))]
     public class InventoryItemIcon : MonoBehaviour
     {
-        // PUBLIC
+        // CONFIG DATA
+        [SerializeField] GameObject textContainer = null;
+        [SerializeField] TextMeshProUGUI itemNumber = null;
 
-        public void SetItem(Sprite item)
+
+        // PUBLIC
+        public void SetItem(InventoryItem item)
+        {
+            SetItem(item, 0);
+        }
+
+        public void SetItem(InventoryItem item, int number)
         {
             var iconImage = GetComponent<Image>();
             if (item == null)
@@ -24,21 +35,23 @@ namespace ProjectRevolt.UI.Inventories
             else
             {
                 iconImage.enabled = true;
-                iconImage.sprite = item;
+                iconImage.sprite = item.GetIcon();
             }
-        }
 
-        public Sprite GetItem()
-        {
-            var iconImage = GetComponent<Image>();
-            if (!iconImage.enabled)
+            if (itemNumber)
             {
-                return null;
+                if (number <= 1)
+                {
+                    textContainer.SetActive(false);
+                }
+                else
+                {
+                    textContainer.SetActive(true);
+                    itemNumber.text = number.ToString();
+                }
             }
-            return iconImage.sprite;
         }
     }
 }
-
 
 
