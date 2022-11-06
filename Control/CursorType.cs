@@ -11,6 +11,7 @@ namespace ProjectRevolt.Control
         Combat,
         UI,
         Pickup,
+        FullPickup
     }
 }
 
