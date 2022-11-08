@@ -7,7 +7,6 @@ namespace ProjectRevolt.Core.UI.Dragging
     /// <summary>
     /// Components that implement this interfaces can act as the source for
     /// dragging a `DragItem`.
-    /// provided by GameDev.tv
     /// </summary>
     /// <typeparam name="T">The type that represents the item being dragged.</typeparam>
     public interface IDragSource<T> where T : class
