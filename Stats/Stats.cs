@@ -6,5 +6,10 @@ namespace ProjectRevolt.Stats
         ExperienceReward,
         ExperienceToLevelUp,
         Damage,
+        Strength,
+        Tenacity,
+        Agility,
+        Resourcefulness,
+        Sage
     } 
 }
