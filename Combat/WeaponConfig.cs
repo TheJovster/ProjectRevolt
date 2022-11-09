@@ -1,11 +1,13 @@
 using ProjectRevolt.Attributes;
 using GameDevTV.Inventories;
 using UnityEngine;
+using ProjectRevolt.Stats;
+using System.Collections.Generic;
 
 namespace ProjectRevolt.Combat 
 {
     [CreateAssetMenu(fileName = "Weapon", menuName = "Weapons/Make New Weapon", order = 0)]
-    public class WeaponConfig : EquipableItem
+    public class WeaponConfig : EquipableItem, IModifierProvider
     {
         //variables
         [Header("Weapon Variables and Components")]
@@ -123,6 +125,22 @@ namespace ProjectRevolt.Combat
         public bool HasProjectile() 
         {
             return projectile != null;
+        }
+
+        public IEnumerable<float> GetAdditiveModifiers(Stat stat)
+        {
+            if(stat == Stat.Damage) 
+            {
+                yield return weaponDamage;
+            }
+        }
+
+        public IEnumerable<float> GetPercentageModifiers(Stat stat)
+        {
+            if(stat == Stat.Damage) 
+            {
+                yield return percentageBonus;
+            }
         }
     }
 }
