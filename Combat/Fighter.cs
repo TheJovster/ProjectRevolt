@@ -171,6 +171,11 @@ namespace ProjectRevolt.Combat
             }
         }
 
+        public float GetStaggerChanceFromCurrentWeapon()
+        {
+            return currentWeaponConfig.GetStaggerChance();
+        }
+
         //Animation event
         private void Hit()
         {
@@ -190,7 +195,7 @@ namespace ProjectRevolt.Combat
             }
             else 
             {
-                target.TakeDamage(gameObject, damageToTake);
+                target.TakeDamage(gameObject, damageToTake, currentWeaponConfig.GetStaggerChance());
                 
             }
             if (target.GetComponent<Health>().IsDead())

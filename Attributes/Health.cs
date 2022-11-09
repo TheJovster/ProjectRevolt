@@ -53,11 +53,6 @@ namespace ProjectRevolt.Attributes
             healthPoints.ForceInit();
         }
 
-        void Update()
-        {
-            
-        }
-
         public void UpdateHealth()
         {
             healthPoints.value = GetComponent<BaseStats>().GetStat(Stat.Health);
@@ -77,7 +72,7 @@ namespace ProjectRevolt.Attributes
             }
         }
 
-        public void TakeDamage(GameObject instigator, float damageToTake)
+        public void TakeDamage(GameObject instigator, float damageToTake, float staggerChance)
         {
             if (!IsDead())
             {
@@ -95,7 +90,11 @@ namespace ProjectRevolt.Attributes
                     int takeDamageSFXIndex = UnityEngine.Random.Range(0, takeDamageClips.Length);
                     damageAudioSource.PlayOneShot(takeDamageClips[takeDamageSFXIndex]);
                     animator.ResetTrigger("Attack");
-                    animator.SetTrigger("TakeDamage");
+                    int staggerOnTakeDamageChance = UnityEngine.Random.Range(0, 100);
+                    if(staggerOnTakeDamageChance < staggerChance) 
+                    {
+                        animator.SetTrigger("TakeDamage");
+                    }
                 }
             }
             else

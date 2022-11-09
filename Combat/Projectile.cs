@@ -69,7 +69,7 @@ namespace ProjectRevolt.Combat
             //impact event for enemy objects
             int impactSFXIndex = Random.Range(0, audioClips.Length);
             other.gameObject.GetComponent<AudioSource>().PlayOneShot(audioClips[impactSFXIndex]);
-            target.TakeDamage(instigator, damage);//deal damage
+            target.TakeDamage(instigator, damage, instigator.GetComponent<Fighter>().GetStaggerChanceFromCurrentWeapon());//deal damage
             ParticleSystem impactFXInstance = Instantiate(impactFX, other.transform.position + Vector3.up, Quaternion.identity);
             Destroy(impactFXInstance.gameObject, impactFX.main.duration);
             Destroy(this.gameObject);//destroy self

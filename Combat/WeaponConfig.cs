@@ -12,6 +12,7 @@ namespace ProjectRevolt.Combat
         [SerializeField] private float weaponRange = 2f;
         [SerializeField] private float weaponDamage = 20f;
         [SerializeField] private float percentageBonus = 0f;
+        [SerializeField] private float staggerChance;
         [SerializeField] private Projectile projectile = null;
 
         const string weaponName = "Weapon";
@@ -107,6 +108,11 @@ namespace ProjectRevolt.Combat
         public float GetWeaponRange() 
         {
             return weaponRange;
+        }
+
+        public float GetStaggerChance() 
+        {
+            return staggerChance;
         }
 
         public bool IsLeftHanded() 
