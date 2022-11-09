@@ -31,6 +31,7 @@ namespace ProjectRevolt.Control
         [SerializeField] private float maxNavMeshProjectionDistance = 1f;
         [SerializeField] private float raycastRadius = 1f;
 
+        private bool isDraggingUI = false;
 
         void Awake()
         {
@@ -102,10 +103,21 @@ namespace ProjectRevolt.Control
 
         private bool InteractWithUI()
         {
-            
+            if(Input.GetMouseButtonUp(0)) 
+            {
+                isDraggingUI = false;
+            }
             if (EventSystem.current.IsPointerOverGameObject()) 
             {
+                if (Input.GetMouseButtonDown(0)) 
+                {
+                    isDraggingUI = true;
+                }
                 SetCursor(CursorType.UI);
+                return true;
+            }
+            if (isDraggingUI) 
+            {
                 return true;
             }
             return false;

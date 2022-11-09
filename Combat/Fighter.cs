@@ -6,6 +6,7 @@ using ProjectRevolt.Saving;
 using ProjectRevolt.Stats;
 using System.Collections.Generic;
 using GameDevTV.Utils;
+using GameDevTV.Inventories;
 
 namespace ProjectRevolt.Combat 
 {
@@ -25,6 +26,7 @@ namespace ProjectRevolt.Combat
         [SerializeField] private Transform leftHandTransform = null;
 
         private Health target;
+        private Equipment equipment;
         private Animator animator; //is this redundant?
         private Mover mover;
         private ActionScheduler actionScheduler;
@@ -39,9 +41,12 @@ namespace ProjectRevolt.Combat
             animator = GetComponent<Animator>();
             currentWeaponConfig = defaultWeaponConfig;
             currentWeapon = new LazyValue<Weapon>(SetupDefaultWeapon);
+            equipment = GetComponent<Equipment>();
+            if (equipment) 
+            {
+                equipment.equipmentUpdated += UpdateWeapon;
+            }
         }
-
-
 
         private Weapon SetupDefaultWeapon() 
         {
@@ -85,7 +90,6 @@ namespace ProjectRevolt.Combat
             Health combatTargetToTest = combatTarget.GetComponent<Health>();
             return combatTarget != null && !combatTargetToTest.IsDead();
         }
-
         private void AttackBehaviour()
         {
             Vector3 lookAtPosition = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
@@ -102,6 +106,19 @@ namespace ProjectRevolt.Combat
         {
             currentWeaponConfig = weapon;
             currentWeapon.value = AttachWeapon(weapon); 
+        }
+
+        private void UpdateWeapon() 
+        {
+            var weapon = equipment.GetItemInSlot(EquipLocation.Weapon) as WeaponConfig;
+            if(weapon == null) 
+            {
+                EquipWeapon(defaultWeaponConfig);
+            }
+            else 
+            {
+                EquipWeapon(weapon);
+            }
         }
 
         private Weapon AttachWeapon(WeaponConfig weapon)
@@ -154,7 +171,6 @@ namespace ProjectRevolt.Combat
             }
         }
 
-
         //Animation event
         private void Hit()
         {
@@ -182,7 +198,6 @@ namespace ProjectRevolt.Combat
                 Cancel();
             }
         }
-
         private void Shoot() 
         {
             Hit();

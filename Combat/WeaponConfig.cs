@@ -1,10 +1,11 @@
 using ProjectRevolt.Attributes;
+using GameDevTV.Inventories;
 using UnityEngine;
 
 namespace ProjectRevolt.Combat 
 {
     [CreateAssetMenu(fileName = "Weapon", menuName = "Weapons/Make New Weapon", order = 0)]
-    public class WeaponConfig : ScriptableObject
+    public class WeaponConfig : EquipableItem
     {
         //variables
         [Header("Weapon Variables and Components")]

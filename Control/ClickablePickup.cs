@@ -1,4 +1,4 @@
-using ProjectRevolt.Inventories;
+using GameDevTV.Inventories;
 using UnityEngine;
 
 namespace ProjectRevolt.Control
