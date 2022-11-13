@@ -100,6 +100,7 @@ namespace ProjectRevolt.Movement
             int stepSFXIndex = Random.Range(0, footsteps.Length);
             stepAudioSource.PlayOneShot(footsteps[stepSFXIndex]);
             GameObject foostepFXInstance = Instantiate(footstepFX, transform.position, Quaternion.identity);
+            Destroy(foostepFXInstance, foostepFXInstance.GetComponent<ParticleSystem>().main.duration + .1f);
         }
 
         public object CaptureState()
