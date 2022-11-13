@@ -15,6 +15,7 @@ namespace ProjectRevolt.Attributes
         private bool isDead = false;
 
         [SerializeField] TakeDamageEvent takeDamage;
+        public UnityEvent onDie;
 
         [Serializable]
         public class TakeDamageEvent : UnityEvent<float> 
@@ -31,10 +32,13 @@ namespace ProjectRevolt.Attributes
         [SerializeField] private AudioSource damageAudioSource;
         [SerializeField] private AudioClip[] takeDamageClips;
         [SerializeField] private AudioClip deathSFX;
+        [SerializeField] private AudioClip healSFX;
 
         //visual FX
         [Header("VFX")]
         [SerializeField] private ParticleSystem bloodFX;
+        [SerializeField] private ParticleSystem healFX;
+
 
         private void Awake()
         {
@@ -65,6 +69,8 @@ namespace ProjectRevolt.Attributes
 
         public void Heal(float healAmount) 
         {
+            healFX.Play();
+            damageAudioSource.PlayOneShot(healSFX);
             healthPoints.value += healAmount;
             if(healthPoints.value > GetComponent<BaseStats>().GetStat(Stat.Health)) 
             {
@@ -83,6 +89,7 @@ namespace ProjectRevolt.Attributes
                 if (healthPoints.value <= 0)
                 {
                     Die();
+                    onDie.Invoke();
                     AwardExperience(instigator);
                 }
                 else

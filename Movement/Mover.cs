@@ -19,6 +19,8 @@ namespace ProjectRevolt.Movement
         //navigation
         private NavMeshAgent navMeshAgent;
 
+        //vfx
+        [SerializeField] private GameObject footstepFX;
         //sound
         [SerializeField] private AudioSource stepAudioSource;
         [SerializeField] private AudioClip[] footsteps;
@@ -97,7 +99,7 @@ namespace ProjectRevolt.Movement
         {
             int stepSFXIndex = Random.Range(0, footsteps.Length);
             stepAudioSource.PlayOneShot(footsteps[stepSFXIndex]);
-
+            GameObject foostepFXInstance = Instantiate(footstepFX, transform.position, Quaternion.identity);
         }
 
         public object CaptureState()

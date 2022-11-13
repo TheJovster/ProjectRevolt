@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ProjectRevolt.Attributes 
 {
     public class HealthDisplay : MonoBehaviour
     {
         Health health;
-        [SerializeField] private TextMeshProUGUI healthValue;
+        [SerializeField] private Image healthValue;
 
         private void Awake()
         {
@@ -23,7 +21,7 @@ namespace ProjectRevolt.Attributes
 
         void Update()
         {
-            healthValue.text = string.Format("{0:0}%", health.GetPercentage().ToString());
+            healthValue.fillAmount = health.GetFraction();
         }
     }
 }

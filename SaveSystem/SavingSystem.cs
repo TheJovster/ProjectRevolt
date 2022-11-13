@@ -8,56 +8,71 @@ using System.Collections;
 
 namespace ProjectRevolt.Saving 
 {
+    /// <summary>
+    /// This component provides the interface to the saving system. It provides
+    /// methods to save and restore a scene.
+    ///
+    /// This component should be created once and shared between all subsequent scenes.
+    /// </summary>
     public class SavingSystem : MonoBehaviour
     {
-
-        public IEnumerator LoadLastScene(string saveFile) 
+        /// <summary>
+        /// Will load the last scene that was saved and restore the state. This
+        /// must be run as a coroutine.
+        /// </summary>
+        /// <param name="saveFile">The save file to consult for loading.</param>
+        public IEnumerator LoadLastScene(string saveFile)
         {
-            //get the state
             Dictionary<string, object> state = LoadFile(saveFile);
-            //load last scene
             int buildIndex = SceneManager.GetActiveScene().buildIndex;
             if (state.ContainsKey("lastSceneBuildIndex"))
             {
                 buildIndex = (int)state["lastSceneBuildIndex"];
             }
             yield return SceneManager.LoadSceneAsync(buildIndex);
-            //restore state
             RestoreState(state);
         }
 
-        public void Save(string saveFile) //serializes and encodes data
+        /// <summary>
+        /// Save the current scene to the provided save file.
+        /// </summary>
+        public void Save(string saveFile)
         {
             Dictionary<string, object> state = LoadFile(saveFile);
             CaptureState(state);
             SaveFile(saveFile, state);
         }
 
-        private void Load(string saveFile) //de-serializes and decodes data (reads it)
+        /// <summary>
+        /// Delete the state in the given save file.
+        /// </summary>
+        public void Delete(string saveFile)
+        {
+            File.Delete(GetPathFromSaveFile(saveFile));
+        }
+
+        public void Load(string saveFile)
         {
             RestoreState(LoadFile(saveFile));
         }
 
-        public void Delete(string saveFile) 
+        public IEnumerable<string> ListSaves()
         {
-            File.Delete(saveFile);
-        }
-
-        private void SaveFile(string saveFile, object state)
-        {
-            string path = GetPathFromSaveFile(saveFile);
-            Debug.Log(path);
-            using (FileStream stream = File.Open(path, FileMode.Create))
+            foreach (string path in Directory.EnumerateFiles(Application.persistentDataPath))
             {
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(stream, state);
+                if (Path.GetExtension(path) == ".sav")
+                {
+                    yield return Path.GetFileNameWithoutExtension(path);
+                }
             }
         }
+
+        // PRIVATE
 
         private Dictionary<string, object> LoadFile(string saveFile)
         {
             string path = GetPathFromSaveFile(saveFile);
-            if (!File.Exists(path)) 
+            if (!File.Exists(path))
             {
                 return new Dictionary<string, object>();
             }
@@ -66,34 +81,43 @@ namespace ProjectRevolt.Saving
                 BinaryFormatter formatter = new BinaryFormatter();
                 return (Dictionary<string, object>)formatter.Deserialize(stream);
             }
+        }
 
+        private void SaveFile(string saveFile, object state)
+        {
+            string path = GetPathFromSaveFile(saveFile);
+            print("Saving to " + path);
+            using (FileStream stream = File.Open(path, FileMode.Create))
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, state);
+            }
         }
 
         private void CaptureState(Dictionary<string, object> state)
         {
-            foreach(SaveableEntity saveable in FindObjectsOfType<SaveableEntity>()) 
+            foreach (SaveableEntity saveable in FindObjectsOfType<SaveableEntity>())
             {
                 state[saveable.GetUniqueIdentifier()] = saveable.CaptureState();
             }
+
             state["lastSceneBuildIndex"] = SceneManager.GetActiveScene().buildIndex;
         }
 
         private void RestoreState(Dictionary<string, object> state)
         {
-            Dictionary<string, object> stateDictionary = (Dictionary<string, object>)state;
-            foreach(SaveableEntity saveable in FindObjectsOfType<SaveableEntity>()) 
+            foreach (SaveableEntity saveable in FindObjectsOfType<SaveableEntity>())
             {
                 string id = saveable.GetUniqueIdentifier();
-                if (state.ContainsKey(id)) 
+                if (state.ContainsKey(id))
                 {
-                    saveable.RestoreState(stateDictionary[id]);
+                    saveable.RestoreState(state[id]);
                 }
             }
         }
 
-        private string GetPathFromSaveFile(string saveFile) 
+        private string GetPathFromSaveFile(string saveFile)
         {
-            
             return Path.Combine(Application.persistentDataPath, saveFile + ".sav");
         }
     }

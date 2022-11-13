@@ -7,6 +7,7 @@ using ProjectRevolt.Attributes;
 using System;
 using UnityEngine.AI;
 using Cinemachine.Utility;
+using GameDevTV.Inventories;
 
 namespace ProjectRevolt.Control 
 {
@@ -26,10 +27,12 @@ namespace ProjectRevolt.Control
         Mover mover;
         Fighter fighter;
         Health health;
+        ActionStore actionStore;
 
         [SerializeField] CursorMapping[] cursorMappings = null;
         [SerializeField] private float maxNavMeshProjectionDistance = 1f;
         [SerializeField] private float raycastRadius = 1f;
+        [SerializeField] int numberOfAbilities = 6;
 
         private bool isDraggingUI = false;
 
@@ -38,6 +41,7 @@ namespace ProjectRevolt.Control
             mover = GetComponent<Mover>();
             fighter = GetComponent<Fighter>();
             health = GetComponent<Health>();
+            actionStore = GetComponent<ActionStore>();
         }
         void Update()
         {
@@ -50,8 +54,12 @@ namespace ProjectRevolt.Control
                 SetCursor(CursorType.None);
                 return;
             }
+
+            UseAbilities();
+
             if (InteractWithComponent()) return;
             if (InteractWithMovement()) return;
+
             SetCursor(CursorType.None);
         }
 
@@ -99,7 +107,16 @@ namespace ProjectRevolt.Control
             return true;
         }
 
-
+        private void UseAbilities()
+        {
+            for (int i = 0; i < numberOfAbilities; i++)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                {
+                    actionStore.Use(i, gameObject);
+                }
+            }
+        }
 
         private bool InteractWithUI()
         {

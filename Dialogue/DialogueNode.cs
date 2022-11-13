@@ -8,6 +8,7 @@ namespace ProjectRevolt.Dialogue
     public class DialogueNode
     {
         [SerializeField] private string uniqueID;
+        public string text;
         public string[] children;
     }
 
