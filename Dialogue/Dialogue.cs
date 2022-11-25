@@ -6,19 +6,17 @@ namespace ProjectRevolt.Dialogue
     [CreateAssetMenu(fileName = "New Dialogue", menuName = "ProjectRevolt/Dialogue", order = 10)]
     public class Dialogue : ScriptableObject
     {
-        [SerializeField] DialogueNode[] nodes;
+        [SerializeField] 
+        List<DialogueNode> nodes = new List<DialogueNode>();
 
-
-        // Start is called before the first frame update
-        void Start()
+#if UNITY_EDITOR
+        private void Awake()
         {
-
+            if(nodes.Count == 0) 
+            {
+                nodes.Add(new DialogueNode());
+            }
         }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
+#endif
     }
 }
