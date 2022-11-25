@@ -18,5 +18,10 @@ namespace ProjectRevolt.Dialogue
             }
         }
 #endif
+
+        public IEnumerable<DialogueNode> GetAllNodes() 
+        {
+            return nodes;
+        }
     }
 }

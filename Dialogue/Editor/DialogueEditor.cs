@@ -50,7 +50,10 @@ namespace ProjectRevolt.Dialogue.Editor
             }
             else 
             {
-                EditorGUILayout.LabelField(selectedDialogue.name);
+                foreach(DialogueNode node in selectedDialogue.GetAllNodes()) 
+                {
+                    EditorGUILayout.LabelField(node.text);
+                }
             }
         }
     }
