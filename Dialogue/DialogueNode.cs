@@ -7,9 +7,10 @@ namespace ProjectRevolt.Dialogue
     [Serializable]
     public class DialogueNode
     {
-        [SerializeField] private string uniqueID;
+        public string uniqueID;
         public string text;
         public string[] children;
+        public Rect rect = new Rect(0, 0, 200, 100);
     }
 
 }

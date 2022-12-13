@@ -10,6 +10,7 @@ namespace ProjectRevolt.Stats
         GoblinGrunt,
         GoblinWarrior,
         GoblinShaman,
-        GoblinWarchief
+        GoblinWarchief,
+        BanditChief
     }
 }

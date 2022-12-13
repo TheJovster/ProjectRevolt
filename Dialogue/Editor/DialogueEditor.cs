@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -8,6 +9,10 @@ namespace ProjectRevolt.Dialogue.Editor
     public class DialogueEditor : EditorWindow
     {
         Dialogue selectedDialogue = null;
+        GUIStyle nodeStyle;
+
+        private bool dragging = false;
+
 
         [MenuItem("Window/Dialogue Editor")]
         public static void ShowEditorWindow() 
@@ -30,6 +35,12 @@ namespace ProjectRevolt.Dialogue.Editor
         private void OnEnable()
         {
             Selection.selectionChanged += OnSelectionChanged;
+
+            nodeStyle = new GUIStyle();
+            nodeStyle.normal.background = EditorGUIUtility.Load("node0") as Texture2D;
+            nodeStyle.normal.textColor = Color.white;
+            nodeStyle.padding = new RectOffset(20, 20, 20, 20);
+            nodeStyle.border = new RectOffset(12, 12, 12, 12);
         }
 
         private void OnSelectionChanged()
@@ -50,11 +61,54 @@ namespace ProjectRevolt.Dialogue.Editor
             }
             else 
             {
-                foreach(DialogueNode node in selectedDialogue.GetAllNodes()) 
+                ProcessEvents();
+
+                foreach(DialogueNode node in selectedDialogue.GetAllNodes())
                 {
-                    EditorGUILayout.LabelField(node.text);
+                    OnGUINode(node);
                 }
             }
+            
+
+        }
+
+        private void ProcessEvents()
+        {
+            if(Event.current.type == EventType.MouseDown && !dragging) 
+            {
+                dragging = true;
+            }
+            else if (Event.current.type == EventType.MouseDrag && dragging) 
+            {
+                Undo.RecordObject(selectedDialogue, "Move Dialogue Node");
+                selectedDialogue.GetRootNode().rect.position = Event.current.mousePosition;
+                GUI.changed = true;
+            }
+            else if(Event.current.type == EventType.MouseUp && dragging) //dragging and dropping
+            {
+                dragging = false;
+                
+            }
+            
+        }
+
+        private void OnGUINode(DialogueNode node)
+        {
+            GUILayout.BeginArea(node.rect, nodeStyle);
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUILayout.LabelField("Node: ", EditorStyles.whiteLabel);
+            string newText = EditorGUILayout.TextField(node.text);
+            string newUniqueID = EditorGUILayout.TextArea(node.uniqueID);
+
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(selectedDialogue, "Update Dialogue Text");
+                node.text = newText;
+                node.uniqueID = newUniqueID;
+            }
+            GUILayout.EndArea();
         }
     }
 }
