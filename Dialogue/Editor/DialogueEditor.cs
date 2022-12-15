@@ -13,6 +13,8 @@ namespace ProjectRevolt.Dialogue.Editor
 
         DialogueNode draggingNode = null;
 
+        Vector2 draggingOffset;
+
 
         [MenuItem("Window/Dialogue Editor")]
         public static void ShowEditorWindow() 
@@ -77,11 +79,15 @@ namespace ProjectRevolt.Dialogue.Editor
             if(Event.current.type == EventType.MouseDown && draggingNode == null) 
             {
                 draggingNode = GetNodeAtPoint(Event.current.mousePosition);
+                if(draggingNode != null) 
+                {
+                    draggingOffset = draggingNode.rect.position - Event.current.mousePosition;
+                }
             }
             else if (Event.current.type == EventType.MouseDrag && draggingNode != null) 
             {
                 Undo.RecordObject(selectedDialogue, "Move Dialogue Node");
-                draggingNode.rect.position = Event.current.mousePosition;
+                draggingNode.rect.position = Event.current.mousePosition + draggingOffset;
                 
                 GUI.changed = true;
             }
@@ -114,14 +120,15 @@ namespace ProjectRevolt.Dialogue.Editor
 
         private DialogueNode GetNodeAtPoint(Vector2 point)
         {
+            DialogueNode foundNode = null;
             foreach(DialogueNode node in selectedDialogue.GetAllNodes()) 
             {
                 if (node.rect.Contains(point)) 
                 {
-                    return node;
+                    foundNode = node;
                 }
             }
-            return null;
+            return foundNode;
         }
     }
 }
