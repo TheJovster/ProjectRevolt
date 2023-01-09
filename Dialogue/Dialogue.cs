@@ -53,7 +53,7 @@ namespace ProjectRevolt.Dialogue
             {
                 parent.AddChild(newNode.name);
             }
-            Undo.RecordObject(this, "Added Dialogue Node");
+            //Undo.RecordObject(this, "Added Dialogue Node");
             nodes.Add(newNode);
             OnValidate();
         }
