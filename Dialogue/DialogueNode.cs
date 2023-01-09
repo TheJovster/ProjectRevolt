@@ -8,6 +8,7 @@ namespace ProjectRevolt.Dialogue
 {
     public class DialogueNode : ScriptableObject
     {
+        [SerializeField] private bool isPlayerSpeaking = false;
         [SerializeField] private string text;
         [SerializeField] private List<string> children = new List<string>();
         [SerializeField] private Rect rect = new Rect(5, 5, 200, 100);
@@ -26,6 +27,11 @@ namespace ProjectRevolt.Dialogue
         public Rect GetRect()
         {
             return rect;
+        }
+
+        public bool IsPlayerSpeaking() 
+        {
+            return isPlayerSpeaking;
         }
 
 #if UNITY_EDITOR
@@ -59,6 +65,13 @@ namespace ProjectRevolt.Dialogue
                 EditorUtility.SetDirty(this);
                 //remember to SetDirty(this) if you add any more setters
             }
+        }
+
+        public void SetPlayerSpeaking(bool newIsPlayerSpeaking) 
+        {
+            Undo.RecordObject(this, "Change Dialogue Speaker");
+            isPlayerSpeaking = newIsPlayerSpeaking;
+            EditorUtility.SetDirty(this); 
         }
     }
 # endif
