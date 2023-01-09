@@ -44,19 +44,15 @@ namespace ProjectRevolt.Dialogue
             }
         }
 #if UNITY_EDITOR
-        public void CreateNode(DialogueNode parent) 
+        public void CreateNode(DialogueNode parent)
         {
-            DialogueNode newNode = CreateInstance<DialogueNode>();
-            newNode.name = Guid.NewGuid().ToString();
+            DialogueNode newNode = MakeNode(parent);
             Undo.RegisterCreatedObjectUndo(newNode, "Created Dialogue Node");
-            if(parent != null) 
-            {
-                parent.AddChild(newNode.name);
-            }
-            //Undo.RecordObject(this, "Added Dialogue Node");
-            nodes.Add(newNode);
-            OnValidate();
+            Undo.RecordObject(this, "Added Dialogue Node");
+            AddNode(newNode);
         }
+
+
 
         public void DeleteNode(DialogueNode nodeToDelete)
         {
@@ -68,6 +64,25 @@ namespace ProjectRevolt.Dialogue
             Undo.DestroyObjectImmediate(nodeToDelete);
         }
 
+                private void AddNode(DialogueNode newNode)
+        {
+            nodes.Add(newNode);
+            OnValidate();
+        }
+
+        private static DialogueNode MakeNode(DialogueNode parent)
+        {
+            DialogueNode newNode = CreateInstance<DialogueNode>();
+            newNode.name = Guid.NewGuid().ToString();
+
+            if (parent != null)
+            {
+                parent.AddChild(newNode.name);
+            }
+
+            return newNode;
+        }
+
         private void CleanDanglingChildren(DialogueNode nodeToDelete)
         {
             foreach (DialogueNode node in GetAllNodes())
@@ -76,13 +91,16 @@ namespace ProjectRevolt.Dialogue
             }
         }
 
+
+
 #endif
         public void OnBeforeSerialize()
         {
 #if UNITY_EDITOR
             if (nodes.Count == 0)
             {
-                CreateNode(null);
+                DialogueNode newNode = MakeNode(null);
+                AddNode(newNode);
             }
 
             if (AssetDatabase.GetAssetPath(this) != "") 
