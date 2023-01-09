@@ -1,6 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 namespace ProjectRevolt.Dialogue.Editor 
@@ -9,11 +10,29 @@ namespace ProjectRevolt.Dialogue.Editor
     public class DialogueEditor : EditorWindow
     {
         Dialogue selectedDialogue = null;
+
+        [NonSerialized]
         GUIStyle nodeStyle;
-
+        [NonSerialized]
         DialogueNode draggingNode = null;
-
+        [NonSerialized]
         Vector2 draggingOffset;
+        [NonSerialized]
+        DialogueNode creatingNode = null;
+        [NonSerialized]
+        DialogueNode deletingNode = null;
+        [NonSerialized]
+        DialogueNode linkingParentNode = null;
+        [NonSerialized]
+        bool draggingCanvas = false;
+        [NonSerialized]
+        Vector2 draggingCanvasOffset;
+
+        Vector2 scrollPosition;
+
+        const float canvasSize = 4000f;
+        const float backgroundSize = 50f;
+        
 
 
         [MenuItem("Window/Dialogue Editor")]
@@ -65,9 +84,37 @@ namespace ProjectRevolt.Dialogue.Editor
             {
                 ProcessEvents();
 
-                foreach(DialogueNode node in selectedDialogue.GetAllNodes())
+                //begin scroll view logic
+                scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+                
+                Rect canvas = GUILayoutUtility.GetRect(canvasSize, canvasSize);
+                Texture2D backgroundTex = Resources.Load("background") as Texture2D;
+                Rect texCoords = new Rect(0, 0, canvasSize / backgroundSize, canvasSize / backgroundSize);
+                GUI.DrawTextureWithTexCoords(canvas, backgroundTex, texCoords);
+
+                foreach (DialogueNode node in selectedDialogue.GetAllNodes())
                 {
-                    OnGUINode(node);
+                    DrawConnections(node);
+                }
+                foreach (DialogueNode node in selectedDialogue.GetAllNodes())
+                {
+                    DrawNode(node);
+                }
+
+
+                EditorGUILayout.EndScrollView();
+                //end scroll view logic
+
+                if (creatingNode != null)
+                {
+                    selectedDialogue.CreateNode(creatingNode);
+                    creatingNode = null;
+                }
+
+                if (deletingNode != null) 
+                {
+                    selectedDialogue.DeleteNode(deletingNode);
+                    deletingNode = null;
                 }
             }
             
@@ -78,44 +125,118 @@ namespace ProjectRevolt.Dialogue.Editor
         {
             if(Event.current.type == EventType.MouseDown && draggingNode == null) 
             {
-                draggingNode = GetNodeAtPoint(Event.current.mousePosition);
+                draggingNode = GetNodeAtPoint(Event.current.mousePosition + scrollPosition);
                 if(draggingNode != null) 
                 {
-                    draggingOffset = draggingNode.rect.position - Event.current.mousePosition;
+                    draggingOffset = draggingNode.GetRect().position - Event.current.mousePosition;
+                    Selection.activeObject = draggingNode;
                 }
+                else 
+                {
+                    draggingCanvas = true;
+                    draggingCanvasOffset = Event.current.mousePosition + scrollPosition;
+                    Selection.activeObject = selectedDialogue;
+                }
+               
             }
             else if (Event.current.type == EventType.MouseDrag && draggingNode != null) 
             {
-                Undo.RecordObject(selectedDialogue, "Move Dialogue Node");
-                draggingNode.rect.position = Event.current.mousePosition + draggingOffset;
+                Vector2 newPosition = Event.current.mousePosition + draggingOffset;
+                draggingNode.SetPosition(newPosition);
                 
                 GUI.changed = true;
+            }
+            else if (Event.current.type == EventType.MouseDrag && draggingCanvas) 
+            {
+                //update scroll position
+                scrollPosition = draggingCanvasOffset - Event.current.mousePosition;
+                GUI.changed = true;
+
             }
             else if(Event.current.type == EventType.MouseUp && draggingNode != null) //dragging and dropping
             {
                 draggingNode = null;
                 
             }
-            
+            else if (Event.current.type == EventType.MouseUp && draggingCanvas) 
+            {
+                draggingCanvas = false;
+            }
         }
 
-        private void OnGUINode(DialogueNode node)
+        private void DrawNode(DialogueNode node)
         {
-            GUILayout.BeginArea(node.rect, nodeStyle);
-            EditorGUI.BeginChangeCheck();
+            GUILayout.BeginArea(node.GetRect(), nodeStyle);
 
-            EditorGUILayout.LabelField("Node: ", EditorStyles.whiteLabel);
-            string newText = EditorGUILayout.TextField(node.text);
-            string newUniqueID = EditorGUILayout.TextArea(node.uniqueID);
+            node.SetText(EditorGUILayout.TextField(node.GetText()));
 
-
-            if (EditorGUI.EndChangeCheck())
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("x"))
             {
-                Undo.RecordObject(selectedDialogue, "Update Dialogue Text");
-                node.text = newText;
-                node.uniqueID = newUniqueID;
+                deletingNode = node;
             }
+            DrawLinkButtons(node);
+            if (GUILayout.Button("+"))
+            {
+                creatingNode = node;
+            }
+            GUILayout.EndHorizontal();
+
             GUILayout.EndArea();
+        }
+
+        private void DrawLinkButtons(DialogueNode node)
+        {
+            if (linkingParentNode == null)
+            {
+                if (GUILayout.Button("Link"))
+                {
+                    linkingParentNode = node;
+                }
+            }
+            else if(linkingParentNode == node)
+            {
+                if (GUILayout.Button("Cancel")) 
+                {
+                    linkingParentNode = null;
+                }
+            }
+            else if (linkingParentNode.GetChildren().Contains(node.name)) 
+            {
+                if (GUILayout.Button("Unlink")) 
+                {
+
+                    linkingParentNode.RemoveChild(node.name);
+                    linkingParentNode = null;
+                }
+            }
+            else 
+            {
+                if (GUILayout.Button("Child"))
+                {
+                    
+                    linkingParentNode.AddChild(node.name);
+                    linkingParentNode = null;
+                }
+            }
+        }
+
+        private void DrawConnections(DialogueNode node)
+        {
+            Vector3 startPositon = new Vector2(node.GetRect().xMax, node.GetRect().center.y);
+            foreach (DialogueNode childNode in selectedDialogue.GetAllChildren(node)) 
+            {
+                Vector3 endPosition = new Vector2(childNode.GetRect().xMax, childNode.GetRect().center.y);
+                Vector3 controlPointOffset = endPosition - startPositon;
+                controlPointOffset.y = 0f;
+                controlPointOffset.x *= 0.8f;
+
+                Handles.DrawBezier(startPositon,
+                    endPosition,
+                    startPositon + controlPointOffset,
+                    endPosition - controlPointOffset,
+                    Color.white, null, 4f);
+            }
         }
 
         private DialogueNode GetNodeAtPoint(Vector2 point)
@@ -123,7 +244,7 @@ namespace ProjectRevolt.Dialogue.Editor
             DialogueNode foundNode = null;
             foreach(DialogueNode node in selectedDialogue.GetAllNodes()) 
             {
-                if (node.rect.Contains(point)) 
+                if (node.GetRect().Contains(point)) 
                 {
                     foundNode = node;
                 }

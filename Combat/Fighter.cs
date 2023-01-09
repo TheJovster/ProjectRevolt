@@ -36,16 +36,17 @@ namespace ProjectRevolt.Combat
 
         private void Awake()
         {
-            actionScheduler = GetComponent<ActionScheduler>();
-            mover = GetComponent<Mover>();
-            animator = GetComponent<Animator>();
             currentWeaponConfig = defaultWeaponConfig;
             currentWeapon = new LazyValue<Weapon>(SetupDefaultWeapon);
             equipment = GetComponent<Equipment>();
-            if (equipment) 
+            if (equipment)
             {
                 equipment.equipmentUpdated += UpdateWeapon;
             }
+
+            actionScheduler = GetComponent<ActionScheduler>();
+            mover = GetComponent<Mover>();
+            animator = GetComponent<Animator>();
         }
 
         private Weapon SetupDefaultWeapon() 
