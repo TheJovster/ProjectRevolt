@@ -15,6 +15,7 @@ namespace ProjectRevolt.UI
         [SerializeField] private Transform choiceRoot;
         [SerializeField] private GameObject choicePrefab;
         [SerializeField] private GameObject AIResponse;
+        [SerializeField] private TextMeshProUGUI conversantName; 
 
         void Start()
         {
@@ -33,6 +34,7 @@ namespace ProjectRevolt.UI
             {
                 return;
             }
+            conversantName.text = playerConversant.GetCurrentConversantName();
             AIResponse.SetActive(!playerConversant.IsChoosing());
             choiceRoot.gameObject.SetActive(playerConversant.IsChoosing());
             if (playerConversant.IsChoosing())

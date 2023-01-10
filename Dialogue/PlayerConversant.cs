@@ -9,6 +9,8 @@ namespace ProjectRevolt.Dialogue
     public class PlayerConversant : MonoBehaviour
     {
         [SerializeField] Dialogue testDialogue;
+
+        [SerializeField] private string playerName;
         private Dialogue currentDialogue;
         private DialogueNode currentNode = null;
         private AIConversant currentConversant = null;
@@ -87,7 +89,11 @@ namespace ProjectRevolt.Dialogue
             return currentDialogue.GetAllChildren(currentNode).Count() > 0;
         }
 
-        
+        public string GetCurrentConversantName() 
+        {
+            if (isChoosing) return playerName;
+            else return currentConversant.GetCharacterName();
+        }
 
         private void TriggerEnterAction() 
         {
