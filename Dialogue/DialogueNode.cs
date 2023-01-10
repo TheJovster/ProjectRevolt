@@ -12,6 +12,8 @@ namespace ProjectRevolt.Dialogue
         [SerializeField] private string text;
         [SerializeField] private List<string> children = new List<string>();
         [SerializeField] private Rect rect = new Rect(5, 5, 200, 100);
+        [SerializeField] private string onEnterAction;
+        [SerializeField] private string onExitAction;
 
         public string GetText() 
         {
@@ -33,6 +35,16 @@ namespace ProjectRevolt.Dialogue
         {
             return isPlayerSpeaking;
         }
+
+        public string GetEnterAction() 
+        {
+            return onEnterAction;
+        }
+        public string GetExitAction()
+        {
+            return onExitAction;
+        }
+
 
 #if UNITY_EDITOR
         public void SetPosition(Vector2 newPosition) 

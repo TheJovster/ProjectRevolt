@@ -23,7 +23,7 @@ namespace ProjectRevolt.Dialogue
 
             if (Input.GetMouseButtonDown(0) && DistanceToPlayer() <= minimumDistance) 
             {
-                callingController.GetComponent<PlayerConversant>().StartDialogue(conversantDialogue);
+                callingController.GetComponent<PlayerConversant>().StartDialogue(this, conversantDialogue);
             }
             return true;
         }

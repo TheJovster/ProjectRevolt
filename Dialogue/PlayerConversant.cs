@@ -11,6 +11,7 @@ namespace ProjectRevolt.Dialogue
         [SerializeField] Dialogue testDialogue;
         private Dialogue currentDialogue;
         private DialogueNode currentNode = null;
+        private AIConversant currentConversant = null;
         private bool isChoosing = false;
 
         public event Action onConversationUpdated;
@@ -18,8 +19,6 @@ namespace ProjectRevolt.Dialogue
         private IEnumerator Start() 
         {
             yield return new WaitForSeconds(2f);
-            if(testDialogue != null)
-            StartDialogue(testDialogue);
         }
 
         public bool IsActive() 
@@ -27,10 +26,12 @@ namespace ProjectRevolt.Dialogue
             return currentDialogue != null;
         }
 
-        public void StartDialogue(Dialogue newDialogue)
+        public void StartDialogue(AIConversant newConversant, Dialogue newDialogue)
         {
+            currentConversant = newConversant;
             currentDialogue = newDialogue;
             currentNode = currentDialogue.GetRootNode();
+            TriggerEnterAction();
             onConversationUpdated();
 
         }
@@ -49,21 +50,7 @@ namespace ProjectRevolt.Dialogue
             return currentNode.GetText();
         }
 
-        public void Next()
-        {
-            int numPlayerResponses = currentDialogue.GetPlayerChildren(currentNode).Count();
-            if (numPlayerResponses > 0)
-            {
-                isChoosing = true;
-                onConversationUpdated();
-                return;
-            }
 
-            DialogueNode[] children = currentDialogue.GetAIChildren(currentNode).ToArray();
-            int randomIndex = UnityEngine.Random.Range(0, children.Count());
-            currentNode = children[randomIndex];
-            onConversationUpdated();
-        }
         public IEnumerable<DialogueNode> GetChoices()
         {
             return currentDialogue.GetPlayerChildren(currentNode);
@@ -72,8 +59,27 @@ namespace ProjectRevolt.Dialogue
         public void SelectChoice(DialogueNode choice)
         {
             currentNode = choice;
+            TriggerEnterAction();
             isChoosing = false;
             Next();
+        }
+        public void Next()
+        {
+            int numPlayerResponses = currentDialogue.GetPlayerChildren(currentNode).Count();
+            if (numPlayerResponses > 0)
+            {
+                isChoosing = true;
+                TriggerExitAction();
+                onConversationUpdated();
+                return;
+            }
+
+            DialogueNode[] children = currentDialogue.GetAIChildren(currentNode).ToArray();
+            int randomIndex = UnityEngine.Random.Range(0, children.Count());
+            TriggerExitAction();
+            currentNode = children[randomIndex];
+            TriggerEnterAction();
+            onConversationUpdated();
         }
 
         public bool HasNext()
@@ -81,11 +87,44 @@ namespace ProjectRevolt.Dialogue
             return currentDialogue.GetAllChildren(currentNode).Count() > 0;
         }
 
+        
+
+        private void TriggerEnterAction() 
+        {
+            if(currentNode != null) 
+            {
+                TriggerAction(currentNode.GetEnterAction());
+            }
+        }
+
+        private void TriggerExitAction() 
+        {
+            if (currentNode != null)
+            {
+                TriggerAction(currentNode.GetExitAction());
+            }
+        }
+
+        private void TriggerAction(string action) 
+        {
+            if(action == "") 
+            {
+                return;
+            }
+            foreach (DialogueTrigger triggers in currentConversant.GetComponents<DialogueTrigger>()) 
+            {
+                triggers.Trigger(action);
+            }
+        }
+
         public void Quit()
         {
+
             currentDialogue = null;
+            TriggerExitAction();
             currentNode = null;
             isChoosing = false;
+            currentConversant = null;
             onConversationUpdated();
         }
     }
