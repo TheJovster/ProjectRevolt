@@ -1,4 +1,4 @@
-using ProjectRevolt.Dialogue;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +8,31 @@ namespace ProjectRevolt.Dialogue
 {
     public class PlayerConversant : MonoBehaviour
     {
-        [SerializeField] private Dialogue currentDialogue;
+        [SerializeField] Dialogue testDialogue;
+        private Dialogue currentDialogue;
         private DialogueNode currentNode = null;
         private bool isChoosing = false;
 
-        private void Awake()
+        public event Action onConversationUpdated;
+
+        private IEnumerator Start() 
         {
+            yield return new WaitForSeconds(2f);
+            if(testDialogue != null)
+            StartDialogue(testDialogue);
+        }
+
+        public bool IsActive() 
+        {
+            return currentDialogue != null;
+        }
+
+        public void StartDialogue(Dialogue newDialogue)
+        {
+            currentDialogue = newDialogue;
             currentNode = currentDialogue.GetRootNode();
+            onConversationUpdated();
+
         }
 
         public bool IsChoosing() 
@@ -37,12 +55,14 @@ namespace ProjectRevolt.Dialogue
             if (numPlayerResponses > 0)
             {
                 isChoosing = true;
+                onConversationUpdated();
                 return;
             }
 
             DialogueNode[] children = currentDialogue.GetAIChildren(currentNode).ToArray();
-            int randomIndex = Random.Range(0, children.Count());
+            int randomIndex = UnityEngine.Random.Range(0, children.Count());
             currentNode = children[randomIndex];
+            onConversationUpdated();
         }
         public IEnumerable<DialogueNode> GetChoices()
         {
@@ -61,14 +81,12 @@ namespace ProjectRevolt.Dialogue
             return currentDialogue.GetAllChildren(currentNode).Count() > 0;
         }
 
-        private void StartDialogue(Dialogue dialogue)
+        public void Quit()
         {
-
-        }
-
-        private void Quit()
-        {
-
+            currentDialogue = null;
+            currentNode = null;
+            isChoosing = false;
+            onConversationUpdated();
         }
     }
 }

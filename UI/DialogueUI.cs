@@ -11,20 +11,29 @@ namespace ProjectRevolt.UI
         //[SerializeField] private TextMeshProUGUI conversantName;
         [SerializeField] private TextMeshProUGUI AIText;
         [SerializeField] private Button nextButton;
+        [SerializeField] private Button quitButton;
         [SerializeField] private Transform choiceRoot;
         [SerializeField] private GameObject choicePrefab;
-        [SerializeField] private GameObject aiResonse;
+        [SerializeField] private GameObject AIResponse;
 
         void Start()
         {
             playerConversant = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerConversant>();
+            playerConversant.onConversationUpdated += UpdateUI;
             nextButton.onClick.AddListener(Next);
+            quitButton.onClick.AddListener(Quit); //you can also use Lambda functions for the this line and the line above
+
             UpdateUI();
         }
 
         private void UpdateUI()
         {
-            aiResonse.SetActive(!playerConversant.IsChoosing());
+            gameObject.SetActive(playerConversant.IsActive());
+            if (!playerConversant.IsActive()) 
+            {
+                return;
+            }
+            AIResponse.SetActive(!playerConversant.IsChoosing());
             choiceRoot.gameObject.SetActive(playerConversant.IsChoosing());
             if (playerConversant.IsChoosing())
             {
@@ -53,7 +62,6 @@ namespace ProjectRevolt.UI
                 button.onClick.AddListener(() => 
                 {
                     playerConversant.SelectChoice(choice);
-                    UpdateUI();
                 });
             }
         }
@@ -61,9 +69,12 @@ namespace ProjectRevolt.UI
         private void Next() 
         {
             playerConversant.Next();
-            UpdateUI();
         }
 
-       
+        private void Quit()
+        {
+            playerConversant.Quit();
+        }
+
     }
 }
