@@ -5,6 +5,7 @@ using ProjectRevolt.Core;
 using System;
 using GameDevTV.Utils;
 using UnityEngine.Events;
+using ProjectRevolt.Dialogue;
 
 namespace ProjectRevolt.Attributes 
 {

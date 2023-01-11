@@ -13,6 +13,18 @@ namespace ProjectRevolt.Dialogue
         
         public CursorType GetCursorType()
         {
+            if(GetComponent<Health>() == null) 
+            {
+                return CursorType.Dialogue;
+            }
+            else if (!GetComponent<Health>().IsDead()) 
+            {
+                return CursorType.Dialogue;
+            }
+            else if (GetComponent<Health>().IsDead()) 
+            {
+                return CursorType.None;
+            }
             return CursorType.Dialogue;
         }
 
@@ -25,9 +37,12 @@ namespace ProjectRevolt.Dialogue
 
             if (Input.GetMouseButtonDown(0) && DistanceToPlayer() <= minimumDistance) 
             {
-                if (GetComponent<Health>() != null && !GetComponent<Health>().IsDead()) 
+                if (GetComponent<Health>() != null) 
                 {
-                    callingController.GetComponent<PlayerConversant>().StartDialogue(this, conversantDialogue);
+                    if (!GetComponent<Health>().IsDead()) 
+                    {
+                        callingController.GetComponent<PlayerConversant>().StartDialogue(this, conversantDialogue);
+                    }
                 }
                 else 
                 {
