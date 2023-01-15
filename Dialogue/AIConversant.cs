@@ -1,5 +1,6 @@
 using ProjectRevolt.Attributes;
 using ProjectRevolt.Control;
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -10,7 +11,9 @@ namespace ProjectRevolt.Dialogue
         [SerializeField] private Dialogue conversantDialogue;
         [SerializeField] private float minimumDistance = 5f;
         [SerializeField] private string characterName;
-        
+        [SerializeField] private AudioSource conversantAudio;
+        [SerializeField] private AudioClip NPCSpeech;
+
         public CursorType GetCursorType()
         {
             if(GetComponent<Health>() == null) 
@@ -61,6 +64,16 @@ namespace ProjectRevolt.Dialogue
         private float DistanceToPlayer() 
         {
              return Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
+        }
+
+        public void PlayCharacterSpeech() 
+        {
+            conversantAudio.PlayOneShot(NPCSpeech);
+        }
+
+        public void StopCharacterSpeech() 
+        {
+            conversantAudio.Stop();
         }
     }
 }

@@ -35,6 +35,7 @@ namespace ProjectRevolt.Dialogue
             currentNode = currentDialogue.GetRootNode();
             TriggerEnterAction();
             onConversationUpdated();
+            newConversant.PlayCharacterSpeech();
 
         }
 

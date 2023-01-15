@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using ProjectRevolt.Quests;
 using TMPro;
@@ -17,6 +19,7 @@ namespace ProjectRevolt.UI.Quests
             this.questStatus = questStatus;
             title.text = questStatus.GetQuest().GetTitle();
             progress.text = questStatus.GetCompletedCount() + "/" + questStatus.GetQuest().GetObjectiveCount();
+            Debug.Log("Setting up UI");
         }
 
         public QuestStatus GetQuestStatus()
