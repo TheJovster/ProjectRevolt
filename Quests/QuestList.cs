@@ -1,13 +1,15 @@
 using GameDevTV.Inventories;
+using ProjectRevolt.Core;
 using ProjectRevolt.Saving;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 
 namespace ProjectRevolt.Quests
 {
-    public class QuestList : MonoBehaviour, ISaveable
+    public class QuestList : MonoBehaviour, ISaveable, IPredicateEvaluator
     {
         private List<QuestStatus> statuses = new List<QuestStatus>();
         public event Action onUpdate;
@@ -105,6 +107,15 @@ namespace ProjectRevolt.Quests
             {
                 Debug.Log(statuses.Count);
             }
+        }
+
+        public bool? Evaluate(string predicate, string[] parameters)
+        {
+            if(predicate != "HasQuest") 
+            {
+                return null;
+            }
+            return HasQuest(Quest.GetByName(parameters[0]));
         }
     }
 }

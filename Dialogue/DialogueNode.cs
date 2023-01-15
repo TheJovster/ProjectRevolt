@@ -1,3 +1,4 @@
+using ProjectRevolt.Core;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
@@ -14,6 +15,7 @@ namespace ProjectRevolt.Dialogue
         [SerializeField] private Rect rect = new Rect(5, 5, 200, 100);
         [SerializeField] private string onEnterAction;
         [SerializeField] private string onExitAction;
+        [SerializeField] Condition condition;
 
         public string GetText() 
         {
@@ -43,6 +45,11 @@ namespace ProjectRevolt.Dialogue
         public string GetExitAction()
         {
             return onExitAction;
+        }
+
+        public bool CheckCondition(IEnumerable<IPredicateEvaluator> evaluators) 
+        {
+            return condition.Check(evaluators);
         }
 
 
