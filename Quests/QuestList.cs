@@ -24,6 +24,7 @@ namespace ProjectRevolt.Quests
         {
             if(HasQuest(quest)) return;
             QuestStatus newStatus = new QuestStatus(quest);
+            Debug.Log("Adding " + quest + "to the QuestList");
             statuses.Add(newStatus);
             if (onUpdate != null) 
             {
