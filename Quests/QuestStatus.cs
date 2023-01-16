@@ -48,6 +48,7 @@ namespace ProjectRevolt.Quests
             if (quest.HasObjective(objective)) 
             {
                 completedObjectives.Add(objective);
+                Debug.Log(objective + " complete.");
             }
         }
 

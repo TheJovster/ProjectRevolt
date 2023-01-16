@@ -19,7 +19,6 @@ namespace ProjectRevolt.UI.Quests
             this.questStatus = questStatus;
             title.text = questStatus.GetQuest().GetTitle();
             progress.text = questStatus.GetCompletedCount() + "/" + questStatus.GetQuest().GetObjectiveCount();
-            Debug.Log("Setting up UI");
         }
 
         public QuestStatus GetQuestStatus()

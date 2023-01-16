@@ -4,6 +4,7 @@ using ProjectRevolt.Saving;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 
@@ -14,9 +15,9 @@ namespace ProjectRevolt.Quests
         private List<QuestStatus> statuses = new List<QuestStatus>();
         public event Action onUpdate;
 
-        void Update() 
+        private void Update()
         {
-            Debugger();
+            CompleteObjectivesByPredicates();
         }
 
         public void AddQuest(Quest quest)
@@ -28,6 +29,7 @@ namespace ProjectRevolt.Quests
             {
                 onUpdate();
             }
+
         }
         public void CompleteObjective(Quest quest, string objective)
         {
@@ -66,10 +68,28 @@ namespace ProjectRevolt.Quests
 
         }
 
+        private void CompleteObjectivesByPredicates()
+        {
+            foreach (QuestStatus status in statuses)
+            {
+                if (status.IsComplete()) continue;
+                Quest quest = status.GetQuest();
+                foreach (var objective in quest.GetObjectives())
+                {
+                    if (status.IsObjectiveComplete(objective.reference)) continue;
+                    if (!objective.usesCondition) continue;
+                    if (objective.completionCondition.Check(GetComponents<IPredicateEvaluator>()))
+                    {
+                        CompleteObjective(quest, objective.reference);
+                    }
+                }
+            }
+        }
+
         public object CaptureState()
         {
             List<object> state = new List<object>();
-            foreach(QuestStatus status in statuses) 
+            foreach (QuestStatus status in statuses)
             {
                 state.Add(status.CaptureState());
             }
@@ -86,7 +106,7 @@ namespace ProjectRevolt.Quests
             {
                statuses.Add(new QuestStatus(objectState));
             }
-            onUpdate();
+            //onUpdate();
         }
 
         private void GiveReward(Quest quest)
@@ -101,21 +121,26 @@ namespace ProjectRevolt.Quests
             }
         }
 
-        private void Debugger() 
-        {
-            if (Input.GetKeyDown(KeyCode.U)) 
-            {
-                Debug.Log(statuses.Count);
-            }
-        }
 
+
+        // QuestList predicates
         public bool? Evaluate(string predicate, string[] parameters)
         {
-            if(predicate != "HasQuest") 
+
+            switch (predicate) 
             {
-                return null;
+                case "HasQuest":
+                    return HasQuest(Quest.GetByName(predicate));
+                case "CompletedQuest":
+                    if(statuses.Count > 0)
+                    {
+                        return GetQuestStatus(Quest.GetByName(parameters[0])).IsComplete();
+                        
+                    }
+                    return false;
+
             }
-            return HasQuest(Quest.GetByName(parameters[0]));
+            return null;
         }
     }
 }

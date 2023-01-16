@@ -27,9 +27,7 @@ namespace ProjectRevolt.UI.Quests
             {
                 QuestItemUI uiInstance = Instantiate<QuestItemUI>(questPrefab, transform);
                 uiInstance.Setup(status);
-                Debug.Log("Populated QuestStatus list");
             }
-            Debug.Log("Redrawing QuestList");
         }
 
         private void PlayOneShotAddedQuest() 
