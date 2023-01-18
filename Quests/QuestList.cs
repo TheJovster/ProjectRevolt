@@ -131,7 +131,7 @@ namespace ProjectRevolt.Quests
             switch (predicate) 
             {
                 case "HasQuest":
-                    return HasQuest(Quest.GetByName(predicate));
+                    return HasQuest(Quest.GetByName(parameters[0]));
                 case "CompletedQuest":
                     if(statuses.Count > 0)
                     {
