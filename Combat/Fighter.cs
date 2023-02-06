@@ -79,7 +79,6 @@ namespace ProjectRevolt.Combat
         {
             actionScheduler.StartAction(this);
             target = combatTarget.GetComponent<Health>();
-
         }
 
         public bool CanAttack(GameObject combatTarget) 
@@ -197,7 +196,6 @@ namespace ProjectRevolt.Combat
             else 
             {
                 target.TakeDamage(gameObject, damageToTake, currentWeaponConfig.GetStaggerChance());
-                
             }
             if (target.GetComponent<Health>().IsDead())
             {

@@ -6,16 +6,6 @@ namespace ProjectRevolt.Core
     {
         IAction currentAction = null;
 
-        void Start()
-        {
-
-        }
-
-        void Update()
-        {
-
-        }
-
         public void StartAction(IAction action) 
         {
             if (currentAction == action) return;

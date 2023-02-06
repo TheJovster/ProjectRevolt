@@ -2,7 +2,6 @@ using UnityEngine;
 using ProjectRevolt.Attributes;
 using ProjectRevolt.Control;
 
-
 namespace ProjectRevolt.Combat 
 {
     [RequireComponent(typeof(Health))]

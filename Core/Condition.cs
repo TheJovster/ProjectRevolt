@@ -50,7 +50,6 @@ namespace ProjectRevolt.Core
                 foreach (var evaluator in evaluators)
                 {
                     bool? result = evaluator.Evaluate(predicate, parameters);
-                    Debug.Log($"Checking {predicate}/{parameters[0]} in {evaluator}, result = {result}");
                     if (result == null)
                     {
                         continue;

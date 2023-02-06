@@ -37,7 +37,6 @@ namespace ProjectRevolt.Movement
         {
             actionScheduler = GetComponent<ActionScheduler>();
             animator = GetComponent<Animator>();
-
         }
 
         void Update()

@@ -25,17 +25,14 @@ namespace ProjectRevolt.UI.Quests
             foreach (var objective in quest.GetObjectives()) 
             {
                 GameObject prefab = objectiveIncompletePrefab; ;
-                Debug.Log("objective not complete");
                 if (status.IsObjectiveComplete(objective.reference)) 
                 {
                     prefab = objectiveCompletePrefab;
-                    Debug.Log("Objective complete");
                 }
                 GameObject objectiveInstance = Instantiate(prefab, objectiveContainer);
                 TextMeshProUGUI objectiveText = objectiveInstance.GetComponentInChildren<TextMeshProUGUI>();
                 objectiveText.text = objective.description;
                 //debugging
-                Debug.Log("QuestTooltipUI updated");
             }
             rewardText.text = GetRewardText(quest);
         }

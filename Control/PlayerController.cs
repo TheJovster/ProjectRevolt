@@ -69,9 +69,7 @@ namespace ProjectRevolt.Control
             bool hasHit = RaycastNavMesh(out target);
             if (hasHit)
             {
-                if (!mover.CanMoveTo(target)) { return false; }
-
-
+                if (!mover.CanMoveTo(target)) { return false; } 
                 if (Input.GetMouseButton(0)) 
                 {
                     if (mover.enabled == false) 
@@ -99,7 +97,7 @@ namespace ProjectRevolt.Control
             bool hasCastToNavMesh = 
                 NavMesh.SamplePosition(hit.point, out navMeshHit,  maxNavMeshProjectionDistance, NavMesh.AllAreas);
             if (!hasCastToNavMesh) return false;
-            //return true if we can find navmesh point
+            //return true if navmesh point is found
             target = navMeshHit.position;
             //nav mesh path length calculation
 
